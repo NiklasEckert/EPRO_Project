@@ -1,5 +1,6 @@
 package de.niklaseckert.epro_project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ public class HistoryBusinessUnitObjectiveKeyResult {
     @SequenceGenerator(name = "h_business_unit_objective_key_result_id_seq", sequenceName = "h_business_unit_objective_key_result_id_seq", allocationSize = 1)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "bo_kr_id", nullable = false, updatable = false)
     private BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult;
@@ -35,10 +37,12 @@ public class HistoryBusinessUnitObjectiveKeyResult {
     @Column(name = "comment", nullable = false, updatable = false)
     private String comment;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "business_unit_objective_id", nullable = false, updatable = false)
     private BusinessUnitObjective businessUnitObjective;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "co_key_result_id", updatable = false)
     private CompanyObjectiveKeyResult companyObjectiveKeyResult;
