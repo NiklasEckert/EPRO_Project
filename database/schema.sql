@@ -121,48 +121,48 @@ $check_bu_key_result_amount$ LANGUAGE plpgsql;
 CREATE TRIGGER check_bu_key_result_amount BEFORE INSERT OR UPDATE ON okr.business_unit_objective_key_result
     FOR EACH ROW EXECUTE PROCEDURE check_bu_key_result_amount();
 
-CREATE OR REPLACE FUNCTION set_current_and_goal_to_zero() RETURNS trigger AS $set_current_and_goal_to_zero$
-    BEGIN
-        NEW.current := 0;
-        NEW.goal := 0;
-
-        RETURN NEW;
-    END;
-$set_current_and_goal_to_zero$ LANGUAGE plpgsql;
-
-CREATE TRIGGER set_current_and_goal_to_zero BEFORE INSERT ON okr.company_objective_key_result
-    FOR EACH ROW EXECUTE PROCEDURE set_current_and_goal_to_zero();
-
-CREATE OR REPLACE FUNCTION calculate_current_and_goal() RETURNS trigger AS $calculate_current_and_goal$
-    DECLARE
-        cur numeric;
-        gol numeric;
-    BEGIN
-        SELECT sum(current)
-        INTO cur
-        FROM okr.business_unit_objective_key_result
-        WHERE co_key_result_id = NEW.co_key_result_id;
-
-        SELECT sum(goal)
-        INTO gol
-        FROM okr.business_unit_objective_key_result
-        WHERE co_key_result_id = NEW.co_key_result_id;
-
-        UPDATE okr.company_objective_key_result
-        SET current = (cur),
-            goal = (gol)
-        WHERE id = NEW.co_key_result_id;
-
-        RETURN NEW;
-    END;
-$calculate_current_and_goal$ LANGUAGE plpgsql;
-
-CREATE TRIGGER calculate_current_and_goal AFTER INSERT OR UPDATE ON okr.business_unit_objective_key_result
-    FOR EACH ROW EXECUTE PROCEDURE calculate_current_and_goal();
+-- CREATE OR REPLACE FUNCTION set_current_and_goal_to_zero() RETURNS trigger AS $set_current_and_goal_to_zero$
+--     BEGIN
+--         NEW.current := 0;
+--         NEW.goal := 0;
+--
+--         RETURN NEW;
+--     END;
+-- $set_current_and_goal_to_zero$ LANGUAGE plpgsql;
+--
+-- CREATE TRIGGER set_current_and_goal_to_zero BEFORE INSERT ON okr.company_objective_key_result
+--     FOR EACH ROW EXECUTE PROCEDURE set_current_and_goal_to_zero();
+--
+-- CREATE OR REPLACE FUNCTION calculate_current_and_goal() RETURNS trigger AS $calculate_current_and_goal$
+--     DECLARE
+--         cur numeric;
+--         gol numeric;
+--     BEGIN
+--         SELECT sum(current)
+--         INTO cur
+--         FROM okr.business_unit_objective_key_result
+--         WHERE co_key_result_id = NEW.co_key_result_id;
+--
+--         SELECT sum(goal)
+--         INTO gol
+--         FROM okr.business_unit_objective_key_result
+--         WHERE co_key_result_id = NEW.co_key_result_id;
+--
+--         UPDATE okr.company_objective_key_result
+--         SET current = (cur),
+--             goal = (gol)
+--         WHERE id = NEW.co_key_result_id;
+--
+--         RETURN NEW;
+--     END;
+-- $calculate_current_and_goal$ LANGUAGE plpgsql;
+--
+-- CREATE TRIGGER calculate_current_and_goal AFTER INSERT OR UPDATE ON okr.business_unit_objective_key_result
+--     FOR EACH ROW EXECUTE PROCEDURE calculate_current_and_goal();
 
 CREATE OR REPLACE FUNCTION co_kr_update_to_history() RETURNS trigger AS $co_kr_update_to_history$
     BEGIN
-        INSERT INTO h_company_objective_key_result VALUES (
+        INSERT INTO okr.h_company_objective_key_result VALUES (
             default,
             OLD.id,
             OLD.name,
@@ -183,7 +183,7 @@ CREATE TRIGGER co_kr_update_to_history BEFORE UPDATE ON okr.company_objective_ke
 
 CREATE OR REPLACE FUNCTION bu_kr_update_to_history() RETURNS trigger AS $bu_kr_update_to_history$
     BEGIN
-        INSERT INTO h_business_unit_objective_key_result VALUES (
+        INSERT INTO okr.h_business_unit_objective_key_result VALUES (
             default,
             OLD.id,
             OLD.name,
@@ -195,6 +195,8 @@ CREATE OR REPLACE FUNCTION bu_kr_update_to_history() RETURNS trigger AS $bu_kr_u
             OLD.business_unit_objective_id,
             OLD.co_key_result_id
         );
+
+        RETURN NEW;
     END;
 $bu_kr_update_to_history$ LANGUAGE plpgsql;
 
