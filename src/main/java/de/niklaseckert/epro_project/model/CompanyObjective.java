@@ -1,5 +1,6 @@
 package de.niklaseckert.epro_project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,6 +22,7 @@ public class CompanyObjective {
     @Column(name = "description", nullable = false)
     private String description;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "companyObjective")
     private List<CompanyObjectiveKeyResult> keyResults;
 }
