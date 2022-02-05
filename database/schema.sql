@@ -1,5 +1,7 @@
 CREATE SCHEMA IF NOT EXISTS okr;
 
+SET search_path TO okr;
+
 CREATE TABLE IF NOT EXISTS okr.company_objective (
     id SERIAL PRIMARY KEY,
     name text NOT NULL UNIQUE CHECK (name ~* 'O[1-4]{1}/[0-9]{4}'),

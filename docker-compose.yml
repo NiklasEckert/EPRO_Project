@@ -8,6 +8,7 @@ services:
     environment:
       POSTGRES_PASSWORD: epro_pass
       POSTGRES_USER: epro_user
+      POSTGRES_DB: epro
     volumes:
       - ./database/schema.sql:/docker-entrypoint-initdb.d/a_schema.sql
       - ./database/dummy_data.sql:/docker-entrypoint-initdb.d/b_dummy_data.sql
