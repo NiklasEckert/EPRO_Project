@@ -45,4 +45,26 @@ public class CompanyObjectiveKeyResult {
     @JsonIgnore
     @OneToMany(mappedBy = "companyObjectiveKeyResult")
     private List<HistoryCompanyObjectiveKeyResult> history;
+
+    public CompanyObjectiveKeyResult applyPatch(CompanyObjectiveKeyResult keyResult) {
+        if(keyResult.getName() != null)
+            name = keyResult.getName();
+
+        if(keyResult.getDescription() != null)
+            description = keyResult.getDescription();
+
+        if(keyResult.getCurrent() >= 0.0)
+            current = keyResult.getCurrent();
+
+        if(keyResult.getGoal() >= 0.0)
+            goal = keyResult.getGoal();
+
+        if(keyResult.getConfidenceLevel() >= 0 && keyResult.getConfidenceLevel() <= 100)
+            confidenceLevel = keyResult.getConfidenceLevel();
+
+        if(keyResult.getComment() != null)
+            comment = keyResult.getComment();
+
+        return this;
+    }
 }
