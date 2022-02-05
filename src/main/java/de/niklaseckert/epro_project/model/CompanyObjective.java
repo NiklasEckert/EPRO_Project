@@ -25,4 +25,13 @@ public class CompanyObjective {
     @JsonIgnore
     @OneToMany(mappedBy = "companyObjective")
     private List<CompanyObjectiveKeyResult> keyResults;
+
+    public CompanyObjective applyPatch(CompanyObjective companyObjective) {
+        if(companyObjective.getName() != null)
+            name = companyObjective.getName();
+
+        if(companyObjective.getDescription() != null)
+            description = companyObjective.getDescription();
+        return this;
+    }
 }
