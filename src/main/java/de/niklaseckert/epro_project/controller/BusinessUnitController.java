@@ -6,11 +6,14 @@ import de.niklaseckert.epro_project.model.assembler.BusinessUnitAssembler;
 import de.niklaseckert.epro_project.model.assembler.BusinessUnitKeyResultAssembler;
 import de.niklaseckert.epro_project.model.assembler.BusinessUnitObjectiveAssembler;
 import de.niklaseckert.epro_project.model.assembler.HistoryBusinessUnitObjectiveKeyResultAssembler;
+import de.niklaseckert.epro_project.repos.BusinessUnitObjectiveKeyResultRepository;
 import de.niklaseckert.epro_project.repos.BusinessUnitObjectiveRepository;
 import de.niklaseckert.epro_project.repos.BusinessUnitRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +29,7 @@ public class BusinessUnitController {
 
     private final BusinessUnitRepository repository;
     private final BusinessUnitObjectiveRepository objectiveRepository;
+    private final BusinessUnitObjectiveKeyResultRepository keyResultRepository;
     private final BusinessUnitAssembler assembler;
     private final BusinessUnitObjectiveAssembler objectiveAssembler;
     private final BusinessUnitKeyResultAssembler keyResultAssembler;
@@ -108,5 +112,160 @@ public class BusinessUnitController {
                 .collect(Collectors.toList());
 
         return CollectionModel.of(historyBusinessUnitObjectiveKeyResults, linkTo(methodOn(BusinessUnitController.class).keyResultHistory(id, oid,kid)).withSelfRel());
+    }
+
+    @PostMapping
+    public ResponseEntity<EntityModel<BusinessUnit>> createBusinessUnit(@RequestBody BusinessUnit businessUnit) {
+        BusinessUnit newBusinessUnit = repository.save(businessUnit);
+        return ResponseEntity
+                .created(linkTo(methodOn(BusinessUnitController.class).one(newBusinessUnit.getId())).toUri())
+                .body(assembler.toModel(newBusinessUnit));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EntityModel<BusinessUnit>> replaceBusinessUnit(@RequestBody BusinessUnit newBusinessUnit, @PathVariable Long id) {
+        BusinessUnit updatedBusinessUnit = repository.findById(id)
+                .map(businessUnit -> {
+                    businessUnit.setName(newBusinessUnit.getName());
+                    return repository.save(businessUnit);
+                })
+                .orElseGet(() -> {
+                    newBusinessUnit.setId(id);
+                    return repository.save(newBusinessUnit);
+                });
+        EntityModel<BusinessUnit> entity = assembler.toModel(updatedBusinessUnit);
+        return ResponseEntity
+                .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entity);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBusinessUnit(@PathVariable Long id) {
+        repository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<EntityModel<BusinessUnit>> updateBusinessUnit(@RequestBody BusinessUnit newBusinessUnit, @PathVariable Long id) {
+        BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
+        BusinessUnit updatedBusinessUnit = repository.save(businessUnit.applyPatch(newBusinessUnit));
+
+        EntityModel<BusinessUnit> entity = assembler.toModel(updatedBusinessUnit);
+        return ResponseEntity
+                .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entity);
+    }
+
+    @PostMapping("/{id}/objectives")
+    public ResponseEntity<EntityModel<BusinessUnitObjective>> createBusinessUnitObjective(@RequestBody BusinessUnitObjective newBusinessUnitObjective, @PathVariable Long id) {
+        BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
+        newBusinessUnitObjective.setBusinessUnit(businessUnit);
+        BusinessUnitObjective objective = objectiveRepository.save(newBusinessUnitObjective);
+
+        return ResponseEntity
+                .created(linkTo(methodOn(BusinessUnitController.class).one(objective.getId())).toUri())
+                .body(objectiveAssembler.toModel(objective));
+    }
+
+    @PutMapping("/{id}/objectives/{oid}")
+    public ResponseEntity<EntityModel<BusinessUnitObjective>> replaceBusinessUnitObjective(@RequestBody BusinessUnitObjective newBusinessUnitObjective, @PathVariable Long id, @PathVariable Long oid) {
+        BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
+        BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid)
+                .map(objective -> {
+                    objective.setName(newBusinessUnitObjective.getName());
+                    objective.setDescription(newBusinessUnitObjective.getDescription());
+                    return objectiveRepository.save(objective);
+                })
+                .orElseGet(() -> {
+                    newBusinessUnitObjective.setId(oid);
+                    newBusinessUnitObjective.setBusinessUnit(businessUnit);
+                    return objectiveRepository.save(newBusinessUnitObjective);
+                });
+
+        EntityModel<BusinessUnitObjective> entity = objectiveAssembler.toModel(businessUnitObjective);
+        return ResponseEntity
+                .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entity);
+    }
+
+    @DeleteMapping("/{id}/objectives/{oid}")
+    public ResponseEntity<?> deleteBusinessUnitObjective(@PathVariable Long id, @PathVariable Long oid) {
+        objectiveRepository.deleteById(oid);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/objectives/{oid}")
+    public ResponseEntity<EntityModel<BusinessUnitObjective>> updatedBusinessUnitObjective(@RequestBody BusinessUnitObjective newBusinessUnitObjective, @PathVariable Long id, @PathVariable Long oid) {
+        BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
+        BusinessUnitObjective objective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
+
+        BusinessUnitObjective updatedBusinessUnitObjective = objectiveRepository.save(objective.applyPatch(newBusinessUnitObjective));
+        EntityModel<BusinessUnitObjective> entity = objectiveAssembler.toModel(updatedBusinessUnitObjective);
+        return ResponseEntity
+                .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entity);
+    }
+
+    @PostMapping("/{id}/objectives/{oid}/keyResults")
+    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> createBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid) {
+        BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
+        BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
+
+        newBusinessUnitObjectiveKeyResult.setBusinessUnitObjective(businessUnitObjective);
+        BusinessUnitObjectiveKeyResult keyResult = keyResultRepository.save(newBusinessUnitObjectiveKeyResult);
+
+        return ResponseEntity
+                .created(linkTo(methodOn(BusinessUnitController.class).one(keyResult.getId())).toUri())
+                .body(keyResultAssembler.toModel(keyResult));
+    }
+
+    @PutMapping("/{id}/objectives/{oid}/keyResults/{kid}")
+    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> replaceBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
+        BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
+        BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
+        BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult = keyResultRepository.findById(kid)
+                .map(keyResult -> {
+                    keyResult.setName(newBusinessUnitObjectiveKeyResult.getName());
+                    keyResult.setDescription(newBusinessUnitObjectiveKeyResult.getDescription());
+                    keyResult.setCurrent(newBusinessUnitObjectiveKeyResult.getCurrent());
+                    keyResult.setGoal(newBusinessUnitObjectiveKeyResult.getGoal());
+                    keyResult.setConfidenceLevel(newBusinessUnitObjectiveKeyResult.getConfidenceLevel());
+                    keyResult.setComment(newBusinessUnitObjectiveKeyResult.getComment());
+                    keyResult.setBusinessUnitObjective(businessUnitObjective);
+                    return keyResultRepository.save(keyResult);
+                })
+                .orElseGet(() -> {
+                    newBusinessUnitObjectiveKeyResult.setId(kid);
+                    newBusinessUnitObjectiveKeyResult.setBusinessUnitObjective(businessUnitObjective);
+                    return keyResultRepository.save(newBusinessUnitObjectiveKeyResult);
+                });
+
+
+        EntityModel<BusinessUnitObjectiveKeyResult> entity = keyResultAssembler.toModel(businessUnitObjectiveKeyResult);
+        return ResponseEntity
+                .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entity);
+    }
+
+    /**
+     * ToDo: Test Method
+     */
+    @DeleteMapping("/{id}/objectives/{oid}/keyResults/{kid}")
+    public ResponseEntity<?> deleteBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
+        keyResultRepository.deleteById(kid);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/objectives/{oid}/keyResults/{kid}")
+    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> updateBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
+        BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
+        BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
+        BusinessUnitObjectiveKeyResult keyResult = keyResultRepository.findById(kid).orElseThrow(() -> new BusinessUnitObjectivesKeyResultNotFoundException(kid));
+
+        BusinessUnitObjectiveKeyResult updatedBusinessUnitObjectiveKeyResult = keyResultRepository.save(keyResult.applyPatch(newBusinessUnitObjectiveKeyResult));
+        EntityModel<BusinessUnitObjectiveKeyResult> entity = keyResultAssembler.toModel(updatedBusinessUnitObjectiveKeyResult);
+        return ResponseEntity
+                .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entity);
     }
 }

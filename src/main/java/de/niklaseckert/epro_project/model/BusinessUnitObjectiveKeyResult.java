@@ -46,4 +46,29 @@ public class BusinessUnitObjectiveKeyResult {
     @JsonIgnore
     @OneToMany(mappedBy = "businessUnitObjectiveKeyResult")
     private List<HistoryBusinessUnitObjectiveKeyResult> history;
+
+    public BusinessUnitObjectiveKeyResult applyPatch(BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult) {
+        if(businessUnitObjectiveKeyResult.getName() != null)
+            name = businessUnitObjectiveKeyResult.getName();
+
+        if(businessUnitObjectiveKeyResult.getDescription() != null)
+            description = businessUnitObjectiveKeyResult.getDescription();
+
+        /**
+         * ToDo: ZeroCheck
+         */
+        if(businessUnitObjectiveKeyResult.getCurrent() >= 0.0)
+            current = businessUnitObjectiveKeyResult.getCurrent();
+
+        if(businessUnitObjectiveKeyResult.getGoal() >= 0.0)
+            goal = businessUnitObjectiveKeyResult.getGoal();
+
+        if(businessUnitObjectiveKeyResult.getConfidenceLevel() >= 0.0 && businessUnitObjectiveKeyResult.getConfidenceLevel() <= 100.0)
+            confidenceLevel = businessUnitObjectiveKeyResult.getConfidenceLevel();
+
+        if(businessUnitObjectiveKeyResult.getComment() != null)
+            comment = businessUnitObjectiveKeyResult.getComment();
+
+        return this;
+    }
 }
