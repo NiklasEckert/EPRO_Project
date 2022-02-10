@@ -94,7 +94,7 @@ CREATE OR REPLACE FUNCTION check_co_key_result_amount() RETURNS trigger AS $chec
     END;
 $check_co_key_result_amount$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_co_key_result_amount BEFORE INSERT OR UPDATE ON okr.company_objective_key_result
+CREATE TRIGGER check_co_key_result_amount BEFORE INSERT ON okr.company_objective_key_result
     FOR EACH ROW EXECUTE PROCEDURE check_co_key_result_amount();
 
 CREATE OR REPLACE FUNCTION check_bu_key_result_amount() RETURNS trigger AS $check_bu_key_result_amount$
@@ -120,7 +120,7 @@ CREATE OR REPLACE FUNCTION check_bu_key_result_amount() RETURNS trigger AS $chec
     END;
 $check_bu_key_result_amount$ LANGUAGE plpgsql;
 
-CREATE TRIGGER check_bu_key_result_amount BEFORE INSERT OR UPDATE ON okr.business_unit_objective_key_result
+CREATE TRIGGER check_bu_key_result_amount BEFORE INSERT ON okr.business_unit_objective_key_result
     FOR EACH ROW EXECUTE PROCEDURE check_bu_key_result_amount();
 
 -- CREATE OR REPLACE FUNCTION set_current_and_goal_to_zero() RETURNS trigger AS $set_current_and_goal_to_zero$
