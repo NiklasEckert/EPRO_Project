@@ -2,12 +2,6 @@ CREATE SCHEMA IF NOT EXISTS okr;
 
 SET search_path TO okr;
 
-CREATE TABLE IF NOT EXISTS okr.company_objective (
-    id SERIAL PRIMARY KEY,
-    name text NOT NULL UNIQUE CHECK (name ~* 'O[1-4]{1}/[0-9]{4}'),
-    description text NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS okr.business_unit (
   id SERIAL PRIMARY KEY,
   name text NOT NULL UNIQUE
@@ -27,6 +21,13 @@ CREATE TABLE IF NOT EXISTS okr.okr_roles (
 CREATE TABLE IF NOT EXISTS okr.user_roles (
     user_id integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE CASCADE,
     roles_id integer NOT NULL REFERENCES okr.okr_roles (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS okr.company_objective (
+    id SERIAL PRIMARY KEY,
+    name text NOT NULL UNIQUE CHECK (name ~* 'O[1-4]{1}/[0-9]{4}'),
+    description text NOT NULL,
+    created_by integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS okr.company_objective_key_result (
