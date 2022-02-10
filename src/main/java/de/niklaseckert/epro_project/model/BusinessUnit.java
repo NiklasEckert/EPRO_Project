@@ -21,4 +21,11 @@ public class BusinessUnit {
     @JsonIgnore
     @OneToMany(mappedBy = "businessUnit")
     private List<BusinessUnitObjective> businessUnitObjectives;
+
+    public BusinessUnit applyPatch(BusinessUnit businessUnit) {
+        if(businessUnit.getName() != null)
+            name = businessUnit.getName();
+
+        return this;
+    }
 }

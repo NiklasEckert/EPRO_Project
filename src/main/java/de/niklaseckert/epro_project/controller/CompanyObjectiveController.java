@@ -167,4 +167,23 @@ public class CompanyObjectiveController {
                 .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entity);
     }
+
+    @DeleteMapping("/{id}/keyResults/{kid}")
+    public ResponseEntity<?> deleteKeyResult(@PathVariable Long id, @PathVariable Long kid) {
+        keyResultRepository.deleteById(kid);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/keyResults/{kid}")
+    public ResponseEntity<EntityModel<CompanyObjectiveKeyResult>> updateKeyResult(@RequestBody CompanyObjectiveKeyResult newCompanyObjectiveKeyResult, @PathVariable Long id, @PathVariable Long kid) {
+        CompanyObjective companyObjective = repository.findById(id).orElseThrow(() -> new CompanyObjectiveNotFoundException(id));
+        CompanyObjectiveKeyResult keyResult = keyResultRepository.findById(kid).orElseThrow(() -> new CompanyObjectiveKeyResultNotFoundException(kid));
+
+        CompanyObjectiveKeyResult updatedCompanyObjectiveKeyResult = keyResultRepository.save(keyResult.applyPatch(newCompanyObjectiveKeyResult));
+        EntityModel<CompanyObjectiveKeyResult> entity = keyResultAssembler.toModel(updatedCompanyObjectiveKeyResult);
+        return ResponseEntity
+                .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entity);
+    }
+
 }

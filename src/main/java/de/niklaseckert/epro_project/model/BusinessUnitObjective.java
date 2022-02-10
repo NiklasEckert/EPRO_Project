@@ -30,4 +30,14 @@ public class BusinessUnitObjective {
     @JsonIgnore
     @OneToMany(mappedBy = "businessUnitObjective")
     private List<BusinessUnitObjectiveKeyResult> businessUnitObjectiveKeyResults;
+
+    public BusinessUnitObjective applyPatch(BusinessUnitObjective businessUnitObjective) {
+        if(businessUnitObjective.getName() != null)
+            name = businessUnitObjective.getName();
+
+        if(businessUnitObjective.getDescription() != null)
+            description = businessUnitObjective.getDescription();
+
+        return this;
+    }
 }
