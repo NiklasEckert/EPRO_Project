@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Entity
@@ -46,24 +47,19 @@ public class CompanyObjectiveKeyResult {
     @OneToMany(mappedBy = "companyObjectiveKeyResult")
     private List<HistoryCompanyObjectiveKeyResult> history;
 
-    public CompanyObjectiveKeyResult applyPatch(CompanyObjectiveKeyResult keyResult) {
-        if(keyResult.getName() != null)
-            name = keyResult.getName();
+    public CompanyObjectiveKeyResult applyPatch(Map<String, Object> updates) {
+        if(updates.containsKey("current"))
+            current = (double) updates.get("current");
 
-        if(keyResult.getDescription() != null)
-            description = keyResult.getDescription();
+        if(updates.containsKey("confidence_level")) {
+            int tmp = (int) updates.get("confidence_level");
+            if(tmp < 0 || tmp > 100)
+                throw new IllegalArgumentException("Confidence Level to high or to low!");
+            confidenceLevel = tmp;
+        }
 
-        if(keyResult.getCurrent() >= 0.0)
-            current = keyResult.getCurrent();
-
-        if(keyResult.getGoal() >= 0.0)
-            goal = keyResult.getGoal();
-
-        if(keyResult.getConfidenceLevel() >= 0 && keyResult.getConfidenceLevel() <= 100)
-            confidenceLevel = keyResult.getConfidenceLevel();
-
-        if(keyResult.getComment() != null)
-            comment = keyResult.getComment();
+        if(updates.containsKey("comment"))
+            comment = (String) updates.get("comment");
 
         return this;
     }

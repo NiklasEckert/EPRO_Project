@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -175,11 +176,11 @@ public class CompanyObjectiveController {
     }
 
     @PatchMapping("/{id}/keyResults/{kid}")
-    public ResponseEntity<EntityModel<CompanyObjectiveKeyResult>> updateKeyResult(@RequestBody CompanyObjectiveKeyResult newCompanyObjectiveKeyResult, @PathVariable Long id, @PathVariable Long kid) {
+    public ResponseEntity<EntityModel<CompanyObjectiveKeyResult>> updateKeyResult(@RequestBody Map<String, Object> updates, @PathVariable Long id, @PathVariable Long kid) {
         CompanyObjective companyObjective = repository.findById(id).orElseThrow(() -> new CompanyObjectiveNotFoundException(id));
         CompanyObjectiveKeyResult keyResult = keyResultRepository.findById(kid).orElseThrow(() -> new CompanyObjectiveKeyResultNotFoundException(kid));
 
-        CompanyObjectiveKeyResult updatedCompanyObjectiveKeyResult = keyResultRepository.save(keyResult.applyPatch(newCompanyObjectiveKeyResult));
+        CompanyObjectiveKeyResult updatedCompanyObjectiveKeyResult = keyResultRepository.save(keyResult.applyPatch(updates));
         EntityModel<CompanyObjectiveKeyResult> entity = keyResultAssembler.toModel(updatedCompanyObjectiveKeyResult);
         return ResponseEntity
                 .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
