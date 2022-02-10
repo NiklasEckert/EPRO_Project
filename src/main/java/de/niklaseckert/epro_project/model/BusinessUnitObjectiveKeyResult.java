@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Entity
@@ -47,27 +48,19 @@ public class BusinessUnitObjectiveKeyResult {
     @OneToMany(mappedBy = "businessUnitObjectiveKeyResult")
     private List<HistoryBusinessUnitObjectiveKeyResult> history;
 
-    public BusinessUnitObjectiveKeyResult applyPatch(BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult) {
-        if(businessUnitObjectiveKeyResult.getName() != null)
-            name = businessUnitObjectiveKeyResult.getName();
+    public BusinessUnitObjectiveKeyResult applyPatch(Map<String, Object> updates) {
+        if(updates.containsKey("current"))
+            current = (double) updates.get("current");
 
-        if(businessUnitObjectiveKeyResult.getDescription() != null)
-            description = businessUnitObjectiveKeyResult.getDescription();
+        if(updates.containsKey("confidence_level")) {
+            int tmp = (int) updates.get("confidence_level");
+            if(tmp < 0 || tmp > 100)
+                throw new IllegalArgumentException("Confidence Level to high or to low!");
+            confidenceLevel = tmp;
+        }
 
-        /**
-         * ToDo: ZeroCheck
-         */
-        if(businessUnitObjectiveKeyResult.getCurrent() >= 0.0)
-            current = businessUnitObjectiveKeyResult.getCurrent();
-
-        if(businessUnitObjectiveKeyResult.getGoal() >= 0.0)
-            goal = businessUnitObjectiveKeyResult.getGoal();
-
-        if(businessUnitObjectiveKeyResult.getConfidenceLevel() >= 0.0 && businessUnitObjectiveKeyResult.getConfidenceLevel() <= 100.0)
-            confidenceLevel = businessUnitObjectiveKeyResult.getConfidenceLevel();
-
-        if(businessUnitObjectiveKeyResult.getComment() != null)
-            comment = businessUnitObjectiveKeyResult.getComment();
+        if(updates.containsKey("comment"))
+            comment = (String) updates.get("comment");
 
         return this;
     }

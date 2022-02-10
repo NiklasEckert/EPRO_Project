@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -247,9 +248,6 @@ public class BusinessUnitController {
                 .body(entity);
     }
 
-    /**
-     * ToDo: Test Method
-     */
     @DeleteMapping("/{id}/objectives/{oid}/keyResults/{kid}")
     public ResponseEntity<?> deleteBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
         keyResultRepository.deleteById(kid);
@@ -257,12 +255,12 @@ public class BusinessUnitController {
     }
 
     @PatchMapping("/{id}/objectives/{oid}/keyResults/{kid}")
-    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> updateBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
+    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> updateBusinessUnitObjectiveKeyResult(@RequestBody Map<String, Object> updates, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
         BusinessUnitObjectiveKeyResult keyResult = keyResultRepository.findById(kid).orElseThrow(() -> new BusinessUnitObjectivesKeyResultNotFoundException(kid));
 
-        BusinessUnitObjectiveKeyResult updatedBusinessUnitObjectiveKeyResult = keyResultRepository.save(keyResult.applyPatch(newBusinessUnitObjectiveKeyResult));
+        BusinessUnitObjectiveKeyResult updatedBusinessUnitObjectiveKeyResult = keyResultRepository.save(keyResult.applyPatch(updates));
         EntityModel<BusinessUnitObjectiveKeyResult> entity = keyResultAssembler.toModel(updatedBusinessUnitObjectiveKeyResult);
         return ResponseEntity
                 .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
