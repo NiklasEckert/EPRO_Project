@@ -13,6 +13,22 @@ CREATE TABLE IF NOT EXISTS okr.business_unit (
   name text NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS okr.okr_user (
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL UNIQUE,
+  password text NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS okr.okr_roles (
+  id SERIAL PRIMARY KEY,
+  name text NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS okr.user_roles (
+    user_id integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE CASCADE,
+    roles_id integer NOT NULL REFERENCES okr.okr_roles (id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS okr.company_objective_key_result (
     id SERIAL PRIMARY KEY,
     name text NOT NULL CHECK (name ~* 'KR[1-5]{1}'),
@@ -22,6 +38,7 @@ CREATE TABLE IF NOT EXISTS okr.company_objective_key_result (
     confidence_level integer CHECK (confidence_level >= 0 AND confidence_level <= 100),
     comment text,
     company_objective_id integer NOT NULL REFERENCES okr.company_objective (id) ON DELETE CASCADE,
+    created_by integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE RESTRICT,
     UNIQUE (name, company_objective_id)
 );
 
@@ -30,6 +47,7 @@ CREATE TABLE IF NOT EXISTS okr.business_unit_objective (
   name text NOT NULL CHECK (name ~* 'O[1-4]{1}/[0-9]{4}'),
   description text NOT NULL,
   business_unit_id integer NOT NULL REFERENCES okr.business_unit (id) ON DELETE CASCADE,
+  created_by integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE RESTRICT,
   UNIQUE (name, business_unit_id)
 );
 
@@ -42,7 +60,8 @@ CREATE TABLE IF NOT EXISTS okr.h_company_objective_key_result (
     goal numeric NOT NULL,
     confidence_level integer CHECK (confidence_level >= 0 AND confidence_level <= 100),
     comment text,
-    company_objective_id integer NOT NULL REFERENCES okr.company_objective (id) ON DELETE CASCADE
+    company_objective_id integer NOT NULL REFERENCES okr.company_objective (id) ON DELETE CASCADE,
+    created_by integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS okr.business_unit_objective_key_result (
@@ -55,7 +74,8 @@ CREATE TABLE IF NOT EXISTS okr.business_unit_objective_key_result (
   comment text,
   business_unit_objective_id integer NOT NULL REFERENCES okr.business_unit_objective (id) ON DELETE CASCADE,
   co_key_result_id integer REFERENCES okr.company_objective_key_result (id) ON DELETE CASCADE,
-  UNIQUE (name, business_unit_objective_id)
+  created_by integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE RESTRICT,
+      UNIQUE (name, business_unit_objective_id)
 );
 
 CREATE TABLE IF NOT EXISTS okr.h_business_unit_objective_key_result (
@@ -68,7 +88,8 @@ CREATE TABLE IF NOT EXISTS okr.h_business_unit_objective_key_result (
   confidence_level integer CHECK (confidence_level >= 0 AND confidence_level <= 100),
   comment text,
   business_unit_objective_id integer NOT NULL REFERENCES okr.business_unit_objective (id) ON DELETE CASCADE,
-  co_key_result_id integer REFERENCES okr.company_objective_key_result (id) ON DELETE CASCADE
+  co_key_result_id integer REFERENCES okr.company_objective_key_result (id) ON DELETE CASCADE,
+  created_by integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE CASCADE
 );
 
 CREATE OR REPLACE FUNCTION check_co_key_result_amount() RETURNS trigger AS $check_co_key_result_amount$
