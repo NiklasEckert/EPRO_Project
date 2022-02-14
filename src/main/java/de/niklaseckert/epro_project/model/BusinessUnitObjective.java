@@ -31,6 +31,10 @@ public class BusinessUnitObjective {
     @OneToMany(mappedBy = "businessUnitObjective")
     private List<BusinessUnitObjectiveKeyResult> businessUnitObjectiveKeyResults;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false)
+    private User user;
+
     public BusinessUnitObjective applyPatch(BusinessUnitObjective businessUnitObjective) {
         if(businessUnitObjective.getName() != null)
             name = businessUnitObjective.getName();

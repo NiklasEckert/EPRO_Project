@@ -26,6 +26,10 @@ public class CompanyObjective {
     @OneToMany(mappedBy = "companyObjective")
     private List<CompanyObjectiveKeyResult> keyResults;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false)
+    private User user;
+
     public CompanyObjective applyPatch(CompanyObjective companyObjective) {
         if(companyObjective.getName() != null)
             name = companyObjective.getName();

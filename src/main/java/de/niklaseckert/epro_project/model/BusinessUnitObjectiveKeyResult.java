@@ -48,6 +48,10 @@ public class BusinessUnitObjectiveKeyResult {
     @OneToMany(mappedBy = "businessUnitObjectiveKeyResult")
     private List<HistoryBusinessUnitObjectiveKeyResult> history;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false)
+    private User user;
+
     public BusinessUnitObjectiveKeyResult applyPatch(Map<String, Object> updates) {
         if(updates.containsKey("current"))
             current = (double) updates.get("current");
