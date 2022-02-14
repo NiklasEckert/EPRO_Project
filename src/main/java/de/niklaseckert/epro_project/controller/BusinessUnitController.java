@@ -14,6 +14,8 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,9 +57,10 @@ public class BusinessUnitController {
     }
 
     @GetMapping("/{id}/objectives")
-    public CollectionModel<EntityModel<BusinessUnitObjective>> allObjectives(@PathVariable Long id){
+    public CollectionModel<EntityModel<BusinessUnitObjective>> allObjectives(@PathVariable Long id) {
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
-        List<EntityModel<BusinessUnitObjective>> businessUnitObjectives =businessUnit.getBusinessUnitObjectives().stream()
+        List<EntityModel<BusinessUnitObjective>> businessUnitObjectives = businessUnit.getBusinessUnitObjectives().stream()
+                .filter(o -> o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
                 .map(objectiveAssembler::toModel)
                 .collect(Collectors.toList());
 
@@ -67,10 +70,10 @@ public class BusinessUnitController {
     }
 
     @GetMapping("/{id}/objectives/{oid}")
-    public EntityModel<BusinessUnitObjective> oneObjective(@PathVariable Long id, @PathVariable Long oid){
+    public EntityModel<BusinessUnitObjective> oneObjective(@PathVariable Long id, @PathVariable Long oid) {
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
         BusinessUnitObjective objective= businessUnit.getBusinessUnitObjectives().stream()
-                .filter(o -> o.getId().equals(oid))
+                .filter(o -> o.getId().equals(oid) && o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
                 .findFirst()
                 .orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
 
@@ -81,7 +84,7 @@ public class BusinessUnitController {
     public EntityModel<BusinessUnitObjectiveKeyResult> oneKeyResult(@PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitNotFoundException(oid));
         BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult= businessUnitObjective.getBusinessUnitObjectiveKeyResults().stream()
-                .filter(o -> o.getId().equals(kid))
+                .filter(o -> o.getId().equals(kid) && o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
                 .findFirst()
                 .orElseThrow(() -> new BusinessUnitObjectivesKeyResultNotFoundException(kid));
 
@@ -92,6 +95,7 @@ public class BusinessUnitController {
     public CollectionModel<EntityModel<BusinessUnitObjectiveKeyResult>> allKeyResults(@PathVariable Long id, @PathVariable Long oid) {
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitNotFoundException(oid));
         List<EntityModel<BusinessUnitObjectiveKeyResult>> businessUnitObjectiveKeyResults =businessUnitObjective.getBusinessUnitObjectiveKeyResults().stream()
+                .filter(o -> o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
                 .map(keyResultAssembler::toModel)
                 .collect(Collectors.toList());
 
@@ -104,7 +108,7 @@ public class BusinessUnitController {
     public CollectionModel<EntityModel<HistoryBusinessUnitObjectiveKeyResult>> keyResultHistory(@PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitNotFoundException(oid));
         BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult= businessUnitObjective.getBusinessUnitObjectiveKeyResults().stream()
-                .filter(o -> o.getId().equals(kid))
+                .filter(o -> o.getId().equals(kid) && o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
                 .findFirst()
                 .orElseThrow(() -> new BusinessUnitObjectivesKeyResultNotFoundException(kid));
 
