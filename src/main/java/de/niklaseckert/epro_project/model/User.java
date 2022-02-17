@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "okr_user")
 public class User implements UserDetails {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "okr_user_id_seq")
     @SequenceGenerator(name = "okr_user_id_seq", sequenceName = "okr_user_id_seq", allocationSize = 1)
@@ -50,26 +51,31 @@ public class User implements UserDetails {
     )
     private List<Roles> roles;
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;
