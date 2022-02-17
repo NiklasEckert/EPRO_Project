@@ -8,11 +8,15 @@ import de.niklaseckert.epro_project.model.assembler.CompanyObjectiveKeyResultAss
 import de.niklaseckert.epro_project.model.assembler.HistoryCompanyObjectiveKeyResultAssembler;
 import de.niklaseckert.epro_project.repos.CompanyObjectiveKeyResultRepository;
 import de.niklaseckert.epro_project.repos.CompanyObjectiveRepository;
+import de.niklaseckert.epro_project.repos.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +36,7 @@ public class CompanyObjectiveController {
     private final CompanyObjectiveAssembler assembler;
     private final CompanyObjectiveKeyResultAssembler keyResultAssembler;
     private final HistoryCompanyObjectiveKeyResultAssembler historyCompanyObjectiveKeyResultAssembler;
+    private final UserRepository userRepository;
 
     @GetMapping("/{id}")
     public EntityModel<CompanyObjective> one(@PathVariable Long id){
@@ -91,7 +96,10 @@ public class CompanyObjectiveController {
 
     @PostMapping
     public ResponseEntity<EntityModel<CompanyObjective>> createCompanyObjective(@RequestBody CompanyObjective companyObjective) {
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
+        companyObjective.setUser(user);
         CompanyObjective newCompanyObjective = repository.save(companyObjective);
+
         return ResponseEntity
                 .created(linkTo(methodOn(CompanyObjectiveController.class).one(newCompanyObjective.getId())).toUri())
                 .body(assembler.toModel(newCompanyObjective));
@@ -99,6 +107,8 @@ public class CompanyObjectiveController {
 
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<CompanyObjective>> replaceCompanyObjective(@RequestBody CompanyObjective newCompanyObjective, @PathVariable Long id) {
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
+        newCompanyObjective.setUser(user);
         CompanyObjective updatedCompanyObjective = repository.findById(id)
                 .map(companyObjective -> {
                     companyObjective.setName(newCompanyObjective.getName());
@@ -121,8 +131,12 @@ public class CompanyObjectiveController {
         return ResponseEntity.noContent().build();
     }
 
+    //TODO:Request Body as Map
+
     @PatchMapping("/{id}")
     public ResponseEntity<EntityModel<CompanyObjective>> updateCompanyObjective(@RequestBody CompanyObjective newCompanyObjective, @PathVariable Long id) {
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
+        newCompanyObjective.setUser(user);
         CompanyObjective companyObjective = repository.findById(id).orElseThrow(() -> new CompanyObjectiveNotFoundException(id));
 
         CompanyObjective updatedCompanyObjective = repository.save(companyObjective.applyPatch(newCompanyObjective));
@@ -135,6 +149,8 @@ public class CompanyObjectiveController {
 
     @PostMapping("/{id}/keyResults")
     public ResponseEntity<EntityModel<CompanyObjectiveKeyResult>> createKeyResult(@RequestBody CompanyObjectiveKeyResult newCompanyObjectiveKeyResult, @PathVariable Long id) {
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
+        newCompanyObjectiveKeyResult.setUser(user);
         CompanyObjective companyObjective = repository.findById(id).orElseThrow(() -> new CompanyObjectiveNotFoundException(id));
         newCompanyObjectiveKeyResult.setCompanyObjective(companyObjective);
         CompanyObjectiveKeyResult keyResult = keyResultRepository.save(newCompanyObjectiveKeyResult);
@@ -146,6 +162,8 @@ public class CompanyObjectiveController {
 
     @PutMapping("/{id}/keyResults/{kid}")
     public ResponseEntity<EntityModel<CompanyObjectiveKeyResult>> replaceKeyResult(@RequestBody CompanyObjectiveKeyResult newCompanyObjectiveKeyResult, @PathVariable Long id, @PathVariable Long kid) {
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
+        newCompanyObjectiveKeyResult.setUser(user);
         CompanyObjective companyObjective = repository.findById(id).orElseThrow(() -> new CompanyObjectiveNotFoundException(id));
         CompanyObjectiveKeyResult companyObjectiveKeyResult = keyResultRepository.findById(kid)
                 .map(keyResult -> {
@@ -177,6 +195,8 @@ public class CompanyObjectiveController {
 
     @PatchMapping("/{id}/keyResults/{kid}")
     public ResponseEntity<EntityModel<CompanyObjectiveKeyResult>> updateKeyResult(@RequestBody Map<String, Object> updates, @PathVariable Long id, @PathVariable Long kid) {
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
+        updates.put("user", user);
         CompanyObjective companyObjective = repository.findById(id).orElseThrow(() -> new CompanyObjectiveNotFoundException(id));
         CompanyObjectiveKeyResult keyResult = keyResultRepository.findById(kid).orElseThrow(() -> new CompanyObjectiveKeyResultNotFoundException(kid));
 
