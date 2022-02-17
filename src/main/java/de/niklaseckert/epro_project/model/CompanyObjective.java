@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Entity
@@ -30,12 +31,14 @@ public class CompanyObjective {
     @JoinColumn(name = "created_by", nullable = false)
     private User user;
 
-    public CompanyObjective applyPatch(CompanyObjective companyObjective) {
-        if(companyObjective.getName() != null)
-            name = companyObjective.getName();
+    public CompanyObjective applyPatch(Map<String, Object> update) {
+        if(update.containsKey("name"))
+            name = (String) update.get("name");
 
-        if(companyObjective.getDescription() != null)
-            description = companyObjective.getDescription();
+        if(update.containsKey("description"))
+            description = (String) update.get("description");
+        if(update.containsKey("user"))
+            user = (User) update.get("user");
         return this;
     }
 }

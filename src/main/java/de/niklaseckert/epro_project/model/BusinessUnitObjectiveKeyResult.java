@@ -66,6 +66,9 @@ public class BusinessUnitObjectiveKeyResult {
         if(updates.containsKey("comment"))
             comment = (String) updates.get("comment");
 
+        if(updates.containsKey("user"))
+            user = (User) updates.get("user");
+
         return this;
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -131,15 +132,13 @@ public class CompanyObjectiveController {
         return ResponseEntity.noContent().build();
     }
 
-    //TODO:Request Body as Map
 
     @PatchMapping("/{id}")
-    public ResponseEntity<EntityModel<CompanyObjective>> updateCompanyObjective(@RequestBody CompanyObjective newCompanyObjective, @PathVariable Long id) {
+    public ResponseEntity<EntityModel<CompanyObjective>> updateCompanyObjective(@RequestBody Map<String, Object> updates, @PathVariable Long id) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
-        newCompanyObjective.setUser(user);
         CompanyObjective companyObjective = repository.findById(id).orElseThrow(() -> new CompanyObjectiveNotFoundException(id));
-
-        CompanyObjective updatedCompanyObjective = repository.save(companyObjective.applyPatch(newCompanyObjective));
+        updates.put("user", user);
+        CompanyObjective updatedCompanyObjective = repository.save(companyObjective.applyPatch(updates));
 
         EntityModel<CompanyObjective> entity = assembler.toModel(updatedCompanyObjective);
         return ResponseEntity

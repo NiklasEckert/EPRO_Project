@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Entity
@@ -22,9 +23,9 @@ public class BusinessUnit {
     @OneToMany(mappedBy = "businessUnit")
     private List<BusinessUnitObjective> businessUnitObjectives;
 
-    public BusinessUnit applyPatch(BusinessUnit businessUnit) {
-        if(businessUnit.getName() != null)
-            name = businessUnit.getName();
+    public BusinessUnit applyPatch(Map<String, Object> updates) {
+        if(updates.containsKey("name"))
+            name = (String) updates.get("name");
 
         return this;
     }

@@ -152,11 +152,11 @@ public class BusinessUnitController {
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-    //TODO:Request Body als Map
+
     @PatchMapping("/{id}")
-    public ResponseEntity<EntityModel<BusinessUnit>> updateBusinessUnit(@RequestBody BusinessUnit newBusinessUnit, @PathVariable Long id) {
+    public ResponseEntity<EntityModel<BusinessUnit>> updateBusinessUnit(@RequestBody Map<String, Object> updates, @PathVariable Long id) {
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
-        BusinessUnit updatedBusinessUnit = repository.save(businessUnit.applyPatch(newBusinessUnit));
+        BusinessUnit updatedBusinessUnit = repository.save(businessUnit.applyPatch(updates));
 
         EntityModel<BusinessUnit> entity = assembler.toModel(updatedBusinessUnit);
         return ResponseEntity
@@ -208,13 +208,13 @@ public class BusinessUnitController {
 
     //TODO:Request Body als Map
     @PatchMapping("/{id}/objectives/{oid}")
-    public ResponseEntity<EntityModel<BusinessUnitObjective>> updatedBusinessUnitObjective(@RequestBody BusinessUnitObjective newBusinessUnitObjective, @PathVariable Long id, @PathVariable Long oid) {
+    public ResponseEntity<EntityModel<BusinessUnitObjective>> updatedBusinessUnitObjective(@RequestBody Map<String, Object> updates, @PathVariable Long id, @PathVariable Long oid) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
-        newBusinessUnitObjective.setUser(user);
+        updates.put("user", user);
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
         BusinessUnitObjective objective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
 
-        BusinessUnitObjective updatedBusinessUnitObjective = objectiveRepository.save(objective.applyPatch(newBusinessUnitObjective));
+        BusinessUnitObjective updatedBusinessUnitObjective = objectiveRepository.save(objective.applyPatch(updates));
         EntityModel<BusinessUnitObjective> entity = objectiveAssembler.toModel(updatedBusinessUnitObjective);
         return ResponseEntity
                 .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
