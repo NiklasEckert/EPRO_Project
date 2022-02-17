@@ -16,6 +16,11 @@ public class BusinessUnitObjectiveAssembler implements RepresentationModelAssemb
     @Override
     @NonNull
     public EntityModel<BusinessUnitObjective> toModel(@NonNull BusinessUnitObjective entity) {
-        return EntityModel.of(entity, linkTo(methodOn(BusinessUnitController.class).oneObjective(entity.getBusinessUnit().getId(),entity.getId() )).withSelfRel());
+        return EntityModel.of(entity,
+                linkTo(methodOn(BusinessUnitController.class).oneObjective(entity.getBusinessUnit().getId(), entity.getId())).withSelfRel(),
+                linkTo(methodOn(BusinessUnitController.class).allObjectives(entity.getId())).withRel("objectives"),
+                linkTo(methodOn(BusinessUnitController.class).allKeyResults(entity.getBusinessUnit().getId(), entity.getId())).withRel("key_results"),
+                linkTo(methodOn(BusinessUnitController.class).one(entity.getBusinessUnit().getId())).withRel("business_unit")
+                );
     }
 }

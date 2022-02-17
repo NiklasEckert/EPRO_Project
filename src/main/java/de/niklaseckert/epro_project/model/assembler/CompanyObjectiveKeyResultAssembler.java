@@ -16,7 +16,12 @@ public class CompanyObjectiveKeyResultAssembler implements RepresentationModelAs
     @Override
     @NonNull
     public EntityModel<CompanyObjectiveKeyResult> toModel(@NonNull CompanyObjectiveKeyResult entity) {
-        return EntityModel.of(entity, linkTo(methodOn(CompanyObjectiveController.class).oneKeyResult(entity.getCompanyObjective().getId(),entity.getId() )).withSelfRel());
+        return EntityModel.of(entity,
+                linkTo(methodOn(CompanyObjectiveController.class).oneKeyResult(entity.getCompanyObjective().getId(),entity.getId() )).withSelfRel(),
+                linkTo(methodOn(CompanyObjectiveController.class).allKeyResults(entity.getCompanyObjective().getId())).withRel("key_results"),
+                linkTo(methodOn(CompanyObjectiveController.class).one(entity.getCompanyObjective().getId())).withRel("company_objective")
+
+        );
 
     }
 }

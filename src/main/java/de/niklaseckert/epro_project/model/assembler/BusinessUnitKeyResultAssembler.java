@@ -18,7 +18,12 @@ public class BusinessUnitKeyResultAssembler implements RepresentationModelAssemb
     @Override
     @NonNull
     public EntityModel<BusinessUnitObjectiveKeyResult> toModel(@NonNull BusinessUnitObjectiveKeyResult entity) {
-        return EntityModel.of(entity, linkTo(methodOn(BusinessUnitController.class).oneKeyResult(entity.getBusinessUnitObjective().getBusinessUnit().getId(),entity.getBusinessUnitObjective().getId(), entity.getId())).withSelfRel());
+        return EntityModel.of(entity,
+                linkTo(methodOn(BusinessUnitController.class).oneKeyResult(entity.getBusinessUnitObjective().getBusinessUnit().getId(), entity.getBusinessUnitObjective().getId(), entity.getId())).withSelfRel(),
+                linkTo(methodOn(BusinessUnitController.class).allKeyResults(entity.getBusinessUnitObjective().getId(), entity.getId())).withRel("key_results"),
+                linkTo(methodOn(BusinessUnitController.class).oneObjective(entity.getBusinessUnitObjective().getBusinessUnit().getId(), entity.getBusinessUnitObjective().getId())).withRel("business_unit_objective"),
+                linkTo(methodOn(BusinessUnitController.class).one(entity.getBusinessUnitObjective().getBusinessUnit().getId())).withRel("business_unit")
+                 );
 
     }
 

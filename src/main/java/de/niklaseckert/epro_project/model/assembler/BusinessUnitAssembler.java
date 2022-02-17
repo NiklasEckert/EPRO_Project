@@ -18,7 +18,9 @@ public class BusinessUnitAssembler implements RepresentationModelAssembler<Busin
     public EntityModel<BusinessUnit> toModel(@NonNull BusinessUnit businessUnit) {
 
         return EntityModel.of(businessUnit,
-                    linkTo(methodOn(BusinessUnitController.class).one(businessUnit.getId())).withSelfRel()
+                    linkTo(methodOn(BusinessUnitController.class).one(businessUnit.getId())).withSelfRel(),
+                    linkTo(methodOn(BusinessUnitController.class).all()).withRel("business_units"),
+                    linkTo(methodOn(BusinessUnitController.class).allObjectives(businessUnit.getId())).withRel("objectives")
                 );
     }
 

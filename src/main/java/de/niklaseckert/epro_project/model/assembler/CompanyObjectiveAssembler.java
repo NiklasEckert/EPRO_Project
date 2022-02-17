@@ -18,7 +18,9 @@ public class CompanyObjectiveAssembler implements RepresentationModelAssembler<C
     @NonNull
     public EntityModel<CompanyObjective> toModel(@NonNull CompanyObjective entity) {
         return EntityModel.of(entity,
-                    linkTo(methodOn(CompanyObjectiveController.class).one(entity.getId())).withSelfRel()
-                );
+                    linkTo(methodOn(CompanyObjectiveController.class).one(entity.getId())).withSelfRel(),
+                    linkTo(methodOn(CompanyObjectiveController.class).all()).withRel("objectives"),
+                    linkTo(methodOn(CompanyObjectiveController.class).allKeyResults(entity.getId())).withRel("key_results")
+        );
     }
 }
