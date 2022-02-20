@@ -18,13 +18,13 @@ INSERT INTO okr.company_objective VALUES (default, 'O4/2022', 'Als Umweltfreundl
 INSERT INTO okr.business_unit VALUES (default, 'Sales Team');
 INSERT INTO okr.business_unit VALUES (default, 'Developer Team');
 
-INSERT INTO okr.company_objective_key_result VALUES (default, 'KR1', 'Stellenanzeigen an Universitäten und Hochschulen schalten', 0, 0, 50, 'created', 1, 1);
-INSERT INTO okr.company_objective_key_result VALUES (default, 'KR2', 'Praktika anbieten', 0, 0, 75, 'created', 1, 1);
-INSERT INTO okr.company_objective_key_result VALUES (default, 'KR3', 'Seminare anbieten', 0, 0, 35, 'created', 1, 1);
+INSERT INTO okr.company_objective_key_result VALUES (default, 'KR1', 'Stellenanzeigen an Universitäten und Hochschulen schalten', 5, 20, 50, 'created', 1, 1);
+INSERT INTO okr.company_objective_key_result VALUES (default, 'KR2', 'Praktika anbieten', 7, 10, 75, 'created', 1, 1);
+INSERT INTO okr.company_objective_key_result VALUES (default, 'KR3', 'Seminare anbieten', 2, 69, 35, 'created', 1, 1);
 
-INSERT INTO okr.company_objective_key_result VALUES (default, 'KR1', 'Neue Produkte entwickeln', 0, 0, 80, 'created', 2, 1);
-INSERT INTO okr.company_objective_key_result VALUES (default, 'KR2', 'Produkte weiterentwickeln', 0, 0, 75, 'created', 2, 1);
-INSERT INTO okr.company_objective_key_result VALUES (default, 'KR3', 'Werbeaktionen starten', 0, 0, 60, 'created', 2, 1);
+INSERT INTO okr.company_objective_key_result VALUES (default, 'KR1', 'Neue Produkte entwickeln', 0, 1, 80, 'created', 2, 1);
+INSERT INTO okr.company_objective_key_result VALUES (default, 'KR2', 'Produkte weiterentwickeln', 2, 4, 75, 'created', 2, 1);
+INSERT INTO okr.company_objective_key_result VALUES (default, 'KR3', 'Werbeaktionen starten', 11, 10, 60, 'created', 2, 1);
 
 INSERT INTO okr.business_unit_objective VALUES (default, 'O1/2022', 'Team vergrößern', 1, 2);
 INSERT INTO okr.business_unit_objective VALUES (default, 'O2/2022', 'Werbeinteraktion vergrößern', 1, 2);
@@ -36,10 +36,10 @@ INSERT INTO okr.business_unit_objective VALUES (default, 'O2/2022', 'Neue Produk
 INSERT INTO okr.business_unit_objective VALUES (default, 'O3/2022', 'Produkte finalisieren', 2, 2);
 INSERT INTO okr.business_unit_objective VALUES (default, 'O4/2022', 'Neue Techniken ausprobieren', 2, 2);
 
-INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR1', 'Anzeigen Uni Mainz', 0, 10, 60, 'created', 1, 1, 2);
-INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR2', 'Praktika Uni Mainz', 0, 5, 50, 'created', 1, 2, 2);
-INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR3', 'Seminare Uni Mainz', 0, 3, 45, 'created', 1, 3, 2);
+INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR1', 'Anzeigen Uni Mainz', 4, 10, 60, 'created', 1, 1, 2);
+INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR2', 'Praktika Uni Mainz', 5, 5, 50, 'created', 1, 2, 2);
+INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR3', 'Seminare Uni Mainz', 3, 3, 45, 'created', 1, 3, 2);
 
-INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR1', 'Anzeigen TH Bingen', 0, 10, 30, 'created', 5, 1, 2);
-INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR2', 'Praktika TH Bingen', 0, 5, 77, 'created', 5, 2, 2);
-INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR3', 'Seminare TH Bingen', 0, 3, 98, 'created', 5, 3, 2);
+INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR1', 'Anzeigen TH Bingen', 1, 10, 30, 'created', 5, 1, 2);
+INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR2', 'Praktika TH Bingen', 2, 5, 77, 'created', 5, 2, 2);
+INSERT INTO okr.business_unit_objective_key_result VALUES (default, 'KR3', 'Seminare TH Bingen', 3, 3, 98, 'created', 5, 3, 2);
