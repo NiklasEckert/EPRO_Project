@@ -41,10 +41,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/bu/**").hasRole("BUO_OKR_ADMIN")
                 .antMatchers(HttpMethod.PATCH, "/bu/**").hasRole("BUO_OKR_ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/bu/**").hasRole("BUO_OKR_ADMIN")
-                //.antMatchers(HttpMethod.GET,"/co/**","/bu/**").hasRole("READ_ONLY")
+                .antMatchers("/dashboard").hasRole("READ_ONLY")
                 .and()
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint)
+                .and()
+                .formLogin()
                 .and()
                 .csrf().disable();
     }
