@@ -41,4 +41,16 @@ public class CompanyObjective {
             user = (User) update.get("user");
         return this;
     }
+
+    public int getAchievement() {
+        if (keyResults.size() <= 0)
+            return 0;
+
+        int sum = 0;
+        for (CompanyObjectiveKeyResult keyResult : keyResults) {
+            sum += keyResult.getAchievement();
+        }
+
+        return (sum / keyResults.size());
+    }
 }

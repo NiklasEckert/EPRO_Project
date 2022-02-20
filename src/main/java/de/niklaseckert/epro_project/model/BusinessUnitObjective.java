@@ -48,4 +48,16 @@ public class BusinessUnitObjective {
 
         return this;
     }
+
+    public int getAchievement() {
+        if (businessUnitObjectiveKeyResults.size() <= 0)
+            return 0;
+
+        int sum = 0;
+        for (BusinessUnitObjectiveKeyResult keyResult : businessUnitObjectiveKeyResults) {
+            sum += keyResult.getAchievement();
+        }
+
+        return (sum / businessUnitObjectiveKeyResults.size());
+    }
 }

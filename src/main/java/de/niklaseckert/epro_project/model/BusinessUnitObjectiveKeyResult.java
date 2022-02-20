@@ -71,4 +71,12 @@ public class BusinessUnitObjectiveKeyResult {
 
         return this;
     }
+
+    public int getAchievement() {
+        // TODO: check epsilon
+        if (this.goal == 0) {
+            return 0;
+        }
+        return (int) ((this.current / this.goal) * 100);
+    }
 }
