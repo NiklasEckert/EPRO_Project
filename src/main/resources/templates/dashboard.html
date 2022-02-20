@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>OKR Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <h1>OKR Dashboard</h1>
+    <div class="row">
+        <div class="col-12">
+            <div class="okr_table">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Objectives & Key Results (OKR)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th scope="col" colspan="3">Company Targets</th>
+                                </tr>
+                                <tr>
+                                    <th scope="col" rowspan="2">Achievements of Objectives (%)</th>
+                                    <th scope="col" colspan="2">Objectives and Key Results</th>
+                                </tr>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <th:block th:each="objective: ${company_objectives}">
+                                    <tr class="table-secondary" style="border-top: 3px solid black">
+                                        <th th:text="${objective.getAchievement()} + '%'"
+                                            th:class="${objective.getAchievement()} < 66? (${objective.getAchievement()} < 33? 'table-danger' : 'table-warning') : 'table-success'"/>
+                                        <th th:text="${objective.getName()}"/>
+                                        <th th:text="${objective.getDescription()}"/>
+                                    </tr>
+                                    <tr th:each="keyresult, iterStat: ${objective.getKeyResults()}">
+                                        <th th:text="${keyresult.getAchievement()} + '%'"
+                                            th:class="'fw-light ' + (${keyresult.getAchievement()} < 66? (${keyresult.getAchievement()} < 33? 'table-danger' : 'table-warning') : 'table-success')"/>
+                                        <th th:text="${keyresult.getName()}" class="fw-light"/>
+                                        <th th:text="${keyresult.getDescription()}" class="fw-light"/>
+                                    </tr>
+                                </th:block>
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr th:each="business_unit: ${business_units}" class="mt-3">
+                        <td>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th th:text="${business_unit.getName()}" scope="col" colspan="3"/>
+                                </tr>
+                                <tr>
+                                    <th scope="col" rowspan="2">Achievements of Objectives (%)</th>
+                                    <th scope="col" colspan="2">Objectives and Key Results</th>
+                                </tr>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <th:block th:each="objective: ${business_unit.getBusinessUnitObjectives()}">
+                                    <tr class="table-secondary" style="border-top: 3px solid black">
+                                        <th th:text="${objective.getAchievement()} + '%'"
+                                            th:class="${objective.getAchievement()} < 66? (${objective.getAchievement()} < 33? 'table-danger' : 'table-warning') : 'table-success'"/>
+                                        <th th:text="${objective.getName()}"/>
+                                        <th th:text="${objective.getDescription()}"/>
+                                    </tr>
+                                    <tr th:each="keyresult, iterStat: ${objective.getBusinessUnitObjectiveKeyResults()}">
+                                        <th th:text="${keyresult.getAchievement()} + '%'"
+                                            th:class="'fw-light ' + (${keyresult.getAchievement()} < 66? (${keyresult.getAchievement()} < 33? 'table-danger' : 'table-warning') : 'table-success')"/>
+                                        <th th:text="${keyresult.getName()}" class="fw-light"/>
+                                        <th th:text="${keyresult.getDescription()}" class="fw-light"/>
+                                    </tr>
+                                </th:block>
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
