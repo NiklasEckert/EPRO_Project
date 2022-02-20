@@ -30,6 +30,7 @@ public class BusinessUnitObjective {
 
     @JsonIgnore
     @OneToMany(mappedBy = "businessUnitObjective")
+    @OrderBy("name")
     private List<BusinessUnitObjectiveKeyResult> businessUnitObjectiveKeyResults;
 
     @ManyToOne

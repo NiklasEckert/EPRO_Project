@@ -21,6 +21,7 @@ public class BusinessUnit {
 
     @JsonIgnore
     @OneToMany(mappedBy = "businessUnit")
+    @OrderBy("name")
     private List<BusinessUnitObjective> businessUnitObjectives;
 
     public BusinessUnit applyPatch(Map<String, Object> updates) {
