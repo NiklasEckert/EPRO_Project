@@ -49,7 +49,7 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id")
     )
-    private List<Roles> roles;
+    private List<Role> roles;
 
     @JsonIgnore
     @Override
