@@ -143,7 +143,6 @@ public class BusinessUnitController {
                     return repository.save(businessUnit);
                 })
                 .orElseGet(() -> {
-                    newBusinessUnit.setId(id);
                     return repository.save(newBusinessUnit);
                 });
         EntityModel<BusinessUnit> entity = assembler.toModel(updatedBusinessUnit);
@@ -154,8 +153,11 @@ public class BusinessUnitController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBusinessUnit(@PathVariable Long id) {
+        if (repository.findById(id).isEmpty()) {
+            throw new BusinessUnitNotFoundException(id);
+        }
         repository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.accepted().build();
     }
 
     @PatchMapping("/{id}")
