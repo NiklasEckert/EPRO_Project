@@ -11,6 +11,9 @@ import java.util.Map;
 @Data
 @Entity
 @Table(name = "business_unit_objective")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BusinessUnitObjective {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "business_unit_objective_id_seq")

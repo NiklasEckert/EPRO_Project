@@ -1,13 +1,19 @@
 package de.niklaseckert.epro_project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name = "h_business_unit_objective_key_result")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class HistoryBusinessUnitObjectiveKeyResult {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "h_business_unit_objective_key_result_id_seq")

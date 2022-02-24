@@ -10,6 +10,9 @@ import java.util.Map;
 @Data
 @Entity
 @Table(name = "company_objective")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CompanyObjective {
 
     @Id

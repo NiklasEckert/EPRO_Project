@@ -10,6 +10,9 @@ import java.util.Map;
 @Data
 @Entity
 @Table(name = "company_objective_key_result")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CompanyObjectiveKeyResult {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "company_objective_key_result_id_seq")

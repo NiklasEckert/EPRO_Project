@@ -1,7 +1,10 @@
 package de.niklaseckert.epro_project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
@@ -9,6 +12,9 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "h_company_objective_key_result")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class HistoryCompanyObjectiveKeyResult {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "h_company_objective_key_result_id_seq")
