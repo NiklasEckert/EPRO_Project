@@ -63,7 +63,8 @@ public class BusinessUnitController {
     public CollectionModel<EntityModel<BusinessUnitObjective>> allObjectives(@PathVariable Long id) {
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
         List<EntityModel<BusinessUnitObjective>> businessUnitObjectives = businessUnit.getBusinessUnitObjectives().stream()
-                .filter(o -> o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+                .filter(o -> (o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()) ||
+                        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toList()).contains("ROLE_READ_ONLY")))
                 .map(objectiveAssembler::toModel)
                 .collect(Collectors.toList());
 
@@ -76,7 +77,8 @@ public class BusinessUnitController {
     public EntityModel<BusinessUnitObjective> oneObjective(@PathVariable Long id, @PathVariable Long oid) {
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
         BusinessUnitObjective objective= businessUnit.getBusinessUnitObjectives().stream()
-                .filter(o -> o.getId().equals(oid) && o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+                .filter(o -> (o.getId().equals(oid) && o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()) ||
+                        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toList()).contains("ROLE_READ_ONLY")))
                 .findFirst()
                 .orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
 
@@ -87,7 +89,8 @@ public class BusinessUnitController {
     public EntityModel<BusinessUnitObjectiveKeyResult> oneKeyResult(@PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitNotFoundException(oid));
         BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult= businessUnitObjective.getBusinessUnitObjectiveKeyResults().stream()
-                .filter(o -> o.getId().equals(kid) && o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+                .filter(o -> (o.getId().equals(kid) && o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()) ||
+                        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toList()).contains("ROLE_READ_ONLY")))
                 .findFirst()
                 .orElseThrow(() -> new BusinessUnitObjectivesKeyResultNotFoundException(kid));
 
@@ -98,7 +101,8 @@ public class BusinessUnitController {
     public CollectionModel<EntityModel<BusinessUnitObjectiveKeyResult>> allKeyResults(@PathVariable Long id, @PathVariable Long oid) {
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitNotFoundException(oid));
         List<EntityModel<BusinessUnitObjectiveKeyResult>> businessUnitObjectiveKeyResults =businessUnitObjective.getBusinessUnitObjectiveKeyResults().stream()
-                .filter(o -> o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+                .filter(o -> (o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()) ||
+                        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toList()).contains("ROLE_READ_ONLY")))
                 .map(keyResultAssembler::toModel)
                 .collect(Collectors.toList());
 
@@ -111,7 +115,8 @@ public class BusinessUnitController {
     public CollectionModel<EntityModel<HistoryBusinessUnitObjectiveKeyResult>> keyResultHistory(@PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitNotFoundException(oid));
         BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult= businessUnitObjective.getBusinessUnitObjectiveKeyResults().stream()
-                .filter(o -> o.getId().equals(kid) && o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+                .filter(o -> (o.getId().equals(kid) && o.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()) ||
+                        SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toList()).contains("ROLE_READ_ONLY")))
                 .findFirst()
                 .orElseThrow(() -> new BusinessUnitObjectivesKeyResultNotFoundException(kid));
 
