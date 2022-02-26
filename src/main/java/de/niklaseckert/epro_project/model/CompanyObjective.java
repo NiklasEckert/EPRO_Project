@@ -40,13 +40,15 @@ public class CompanyObjective {
 
         if(update.containsKey("description"))
             description = (String) update.get("description");
+
         if(update.containsKey("user"))
             user = (User) update.get("user");
+
         return this;
     }
 
     public int getAchievement() {
-        if (keyResults.size() <= 0)
+        if (keyResults == null || keyResults.size() <= 0)
             return 0;
 
         int sum = 0;
