@@ -14,10 +14,8 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,7 +58,7 @@ public class CompanyObjectiveController {
     @GetMapping("/{id}/keyResults")
     public CollectionModel<EntityModel<CompanyObjectiveKeyResult>> allKeyResults(@PathVariable Long id) {
         CompanyObjective companyObjective = repository.findById(id).orElseThrow(() -> new CompanyObjectiveNotFoundException(id));
-        List<EntityModel<CompanyObjectiveKeyResult>> companyObjectiveKeyResults =companyObjective.getKeyResults().stream()
+        List<EntityModel<CompanyObjectiveKeyResult>> companyObjectiveKeyResults = companyObjective.getKeyResults().stream()
                 .map(keyResultAssembler::toModel)
                 .collect(Collectors.toList());
 
@@ -128,8 +126,11 @@ public class CompanyObjectiveController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCompanyObjective(@PathVariable Long id) {
+        if(repository.findById(id).isEmpty()) {
+            throw new CompanyObjectiveNotFoundException(id);
+        }
         repository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.accepted().build();
     }
 
 
@@ -188,8 +189,11 @@ public class CompanyObjectiveController {
 
     @DeleteMapping("/{id}/keyResults/{kid}")
     public ResponseEntity<?> deleteKeyResult(@PathVariable Long id, @PathVariable Long kid) {
+        if(keyResultRepository.findById(id).isEmpty()) {
+            throw new CompanyObjectiveKeyResultNotFoundException(kid);
+        }
         keyResultRepository.deleteById(kid);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.accepted().build();
     }
 
     @PatchMapping("/{id}/keyResults/{kid}")
