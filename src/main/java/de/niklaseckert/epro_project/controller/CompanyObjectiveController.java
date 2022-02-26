@@ -115,7 +115,6 @@ public class CompanyObjectiveController {
                     return repository.save(companyObjective);
                 })
                 .orElseGet(() -> {
-                    newCompanyObjective.setId(id);
                     return repository.save(newCompanyObjective);
                 });
         EntityModel<CompanyObjective> entity = assembler.toModel(updatedCompanyObjective);
@@ -132,7 +131,6 @@ public class CompanyObjectiveController {
         repository.deleteById(id);
         return ResponseEntity.accepted().build();
     }
-
 
     @PatchMapping("/{id}")
     public ResponseEntity<EntityModel<CompanyObjective>> updateCompanyObjective(@RequestBody Map<String, Object> updates, @PathVariable Long id) {
@@ -176,7 +174,6 @@ public class CompanyObjectiveController {
                     return keyResultRepository.save(keyResult);
                 })
                 .orElseGet(() -> {
-                    newCompanyObjectiveKeyResult.setId(kid);
                     newCompanyObjectiveKeyResult.setCompanyObjective(companyObjective);
                     return keyResultRepository.save(newCompanyObjectiveKeyResult);
                 });
