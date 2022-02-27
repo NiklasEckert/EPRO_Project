@@ -19,9 +19,18 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             CompanyObjectiveNotFoundException.class,
             CompanyObjectiveKeyResultNotFoundException.class,
             UsernameNotFoundException.class
+
     })
     protected ResponseEntity<Object> handleConflict(RuntimeException exception, WebRequest webRequest) {
         String bodyOfResponse = exception.getMessage();
         return handleExceptionInternal(exception, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, webRequest);
+    }
+
+    @ExceptionHandler(value = {
+            InvalidUserException.class
+    })
+    protected ResponseEntity<Object> handleInvalidUser(RuntimeException exception, WebRequest webRequest ){
+        String bodyOfResponse = exception.getMessage();
+        return handleExceptionInternal(exception, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, webRequest);
     }
 }
