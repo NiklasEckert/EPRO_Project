@@ -33,7 +33,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     *
      * Configures the access for the mappings.
      *
      * @param http allows configuring web based security for specific http requests.
@@ -63,7 +62,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     *
      * Password encoder which is used to encrypt the passwords.
      *
      * @return a password encoder.
