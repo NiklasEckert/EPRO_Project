@@ -9,9 +9,23 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+/**
+ * Exception Handler which handles every possible Exception.
+ *
+ * @author Niklas Eckert
+ * @author Jakob Friedsam
+ * @author Fabian Schulz
+ */
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
+    /**
+     * Method to handle all not found exceptions.
+     *
+     * @param exception contains the occured exception.
+     * @param webRequest contains the request body.
+     * @return a Response Entity which handles the exception.
+     */
     @ExceptionHandler(value = {
             BusinessUnitNotFoundException.class,
             BusinessUnitObjectiveNotFoundException.class,
@@ -26,6 +40,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(exception, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, webRequest);
     }
 
+    /**
+     * Method to handle {@link InvalidUserException Invalid User Exception}.
+     *
+     * @param exception contains the occured exception.
+     * @param webRequest contains the request body.
+     * @return a Response Entity which handles the exception.
+     */
     @ExceptionHandler(value = {
             InvalidUserException.class
     })
