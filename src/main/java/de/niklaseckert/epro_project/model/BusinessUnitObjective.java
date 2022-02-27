@@ -22,6 +22,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BusinessUnitObjective {
+
     /** Represents the id of a Business Unit Objective. */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "business_unit_objective_id_seq")
@@ -42,20 +43,19 @@ public class BusinessUnitObjective {
     @JoinColumn(name = "business_unit_id", nullable = false)
     private BusinessUnit businessUnit;
 
-    /** Represents the {@link BusinessUnitObjectiveKeyResult Key Results} of a Bussiness Unit Objective. */
+    /** Represents the {@link BusinessUnitObjectiveKeyResult Key Results} of a Business Unit Objective. */
     @JsonIgnore
     @OneToMany(mappedBy = "businessUnitObjective")
     @OrderBy("name")
     private List<BusinessUnitObjectiveKeyResult> businessUnitObjectiveKeyResults;
 
-    /** Represents the {@link User user} which created the Business Unit Objective. */
+    /** Represents the {@link User User} which created the Business Unit Objective. */
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User user;
 
     /**
-     *
-     * Applies changes to a Business Unit objective.
+     * Applies changes to a Business Unit Objective.
      *
      * @param update contains the updates for a Business Unit Objective.
      * @return the updated Business Unit Objective.
@@ -74,7 +74,6 @@ public class BusinessUnitObjective {
     }
 
     /**
-     *
      * Calculates the achievement of a Business Unit Objective.
      *
      * @return the achievement of a Business Unit Objective.

@@ -21,6 +21,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BusinessUnit {
+
     /** Represents the id of a Business Unit. */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "business_unit_id_seq")
@@ -38,7 +39,6 @@ public class BusinessUnit {
     private List<BusinessUnitObjective> businessUnitObjectives;
 
     /**
-     *
      * Applies changes to a Business Unit.
      *
      * @param updates contains the updates for a Business Unit.
