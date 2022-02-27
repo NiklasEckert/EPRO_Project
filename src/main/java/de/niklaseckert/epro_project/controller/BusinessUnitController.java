@@ -6,10 +6,7 @@ import de.niklaseckert.epro_project.model.assembler.BusinessUnitAssembler;
 import de.niklaseckert.epro_project.model.assembler.BusinessUnitKeyResultAssembler;
 import de.niklaseckert.epro_project.model.assembler.BusinessUnitObjectiveAssembler;
 import de.niklaseckert.epro_project.model.assembler.HistoryBusinessUnitObjectiveKeyResultAssembler;
-import de.niklaseckert.epro_project.repos.BusinessUnitObjectiveKeyResultRepository;
-import de.niklaseckert.epro_project.repos.BusinessUnitObjectiveRepository;
-import de.niklaseckert.epro_project.repos.BusinessUnitRepository;
-import de.niklaseckert.epro_project.repos.UserRepository;
+import de.niklaseckert.epro_project.repos.*;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -39,6 +36,7 @@ public class BusinessUnitController {
     private final BusinessUnitObjectiveAssembler objectiveAssembler;
     private final BusinessUnitKeyResultAssembler keyResultAssembler;
     private final HistoryBusinessUnitObjectiveKeyResultAssembler historyBusinessUnitObjectiveKeyResultAssembler;
+    private final CompanyObjectiveKeyResultRepository companyObjectiveKeyResultRepository;
     private final UserRepository userRepository;
 
     @GetMapping("/{id}")
@@ -187,17 +185,21 @@ public class BusinessUnitController {
     @PutMapping("/{id}/objectives/{oid}")
     public ResponseEntity<EntityModel<BusinessUnitObjective>> replaceBusinessUnitObjective(@RequestBody BusinessUnitObjective newBusinessUnitObjective, @PathVariable Long id, @PathVariable Long oid) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
-        newBusinessUnitObjective.setUser(user);
+
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid)
+                .filter(o -> (o.getId().equals(oid)))
                 .map(objective -> {
+                    if(!objective.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+                        throw new InvalidUserException(SecurityContextHolder.getContext().getAuthentication().getName());
                     objective.setName(newBusinessUnitObjective.getName());
                     objective.setDescription(newBusinessUnitObjective.getDescription());
+                    objective.setUser(user);
                     return objectiveRepository.save(objective);
                 })
                 .orElseGet(() -> {
-                    newBusinessUnitObjective.setId(oid);
                     newBusinessUnitObjective.setBusinessUnit(businessUnit);
+                    newBusinessUnitObjective.setUser(user);
                     return objectiveRepository.save(newBusinessUnitObjective);
                 });
 
@@ -209,18 +211,21 @@ public class BusinessUnitController {
 
     @DeleteMapping("/{id}/objectives/{oid}")
     public ResponseEntity<?> deleteBusinessUnitObjective(@PathVariable Long id, @PathVariable Long oid) {
+        BusinessUnitObjective objective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
+        if(!objective.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+            throw new InvalidUserException(SecurityContextHolder.getContext().getAuthentication().getName());
         objectiveRepository.deleteById(oid);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.accepted().build();
     }
 
-    //TODO:Request Body als Map
     @PatchMapping("/{id}/objectives/{oid}")
     public ResponseEntity<EntityModel<BusinessUnitObjective>> updatedBusinessUnitObjective(@RequestBody Map<String, Object> updates, @PathVariable Long id, @PathVariable Long oid) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
         updates.put("user", user);
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
         BusinessUnitObjective objective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
-
+        if(!objective.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+            throw new InvalidUserException(user.getUsername());
         BusinessUnitObjective updatedBusinessUnitObjective = objectiveRepository.save(objective.applyPatch(updates));
         EntityModel<BusinessUnitObjective> entity = objectiveAssembler.toModel(updatedBusinessUnitObjective);
         return ResponseEntity
@@ -229,9 +234,11 @@ public class BusinessUnitController {
     }
 
     @PostMapping("/{id}/objectives/{oid}/keyResults")
-    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> createBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid) {
+    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> createBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @RequestParam(name="cokrId", required = false) Long cokrId) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
+        CompanyObjectiveKeyResult companyObjectiveKeyResult = companyObjectiveKeyResultRepository.findById(cokrId).orElseThrow(() -> new CompanyObjectiveKeyResultNotFoundException(cokrId));
         newBusinessUnitObjectiveKeyResult.setUser(user);
+        newBusinessUnitObjectiveKeyResult.setCompanyObjectiveKeyResult(companyObjectiveKeyResult);
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
 
@@ -244,13 +251,17 @@ public class BusinessUnitController {
     }
 
     @PutMapping("/{id}/objectives/{oid}/keyResults/{kid}")
-    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> replaceBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
+    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> replaceBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid, @RequestParam(name="cokrId",required = false, defaultValue = "-1") Long cokrId) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
-        newBusinessUnitObjectiveKeyResult.setUser(user);
+        CompanyObjectiveKeyResult companyObjectiveKeyResult = companyObjectiveKeyResultRepository.findById(cokrId).orElseGet(null);
+
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
         BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult = keyResultRepository.findById(kid)
+                .filter(o -> (o.getId().equals(oid)))
                 .map(keyResult -> {
+                    if(!keyResult.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+                        throw new InvalidUserException(SecurityContextHolder.getContext().getAuthentication().getName());
                     keyResult.setName(newBusinessUnitObjectiveKeyResult.getName());
                     keyResult.setDescription(newBusinessUnitObjectiveKeyResult.getDescription());
                     keyResult.setCurrent(newBusinessUnitObjectiveKeyResult.getCurrent());
@@ -258,11 +269,14 @@ public class BusinessUnitController {
                     keyResult.setConfidenceLevel(newBusinessUnitObjectiveKeyResult.getConfidenceLevel());
                     keyResult.setComment(newBusinessUnitObjectiveKeyResult.getComment());
                     keyResult.setBusinessUnitObjective(businessUnitObjective);
+                    keyResult.setUser(user);
+                    keyResult.setCompanyObjectiveKeyResult(companyObjectiveKeyResult);
                     return keyResultRepository.save(keyResult);
                 })
                 .orElseGet(() -> {
-                    newBusinessUnitObjectiveKeyResult.setId(kid);
                     newBusinessUnitObjectiveKeyResult.setBusinessUnitObjective(businessUnitObjective);
+                    newBusinessUnitObjectiveKeyResult.setUser(user);
+                    newBusinessUnitObjectiveKeyResult.setCompanyObjectiveKeyResult(companyObjectiveKeyResult);
                     return keyResultRepository.save(newBusinessUnitObjectiveKeyResult);
                 });
 
@@ -274,18 +288,27 @@ public class BusinessUnitController {
     }
 
     @DeleteMapping("/{id}/objectives/{oid}/keyResults/{kid}")
-    public ResponseEntity<?> deleteBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
+    public ResponseEntity<?> deleteBusinessUnitObjectiveKeyResult(@PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
+        BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult = keyResultRepository.findById(kid).orElseThrow(()-> new BusinessUnitObjectivesKeyResultNotFoundException(kid));
+        if(!businessUnitObjectiveKeyResult.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+            throw new InvalidUserException(SecurityContextHolder.getContext().getAuthentication().getName());
         keyResultRepository.deleteById(kid);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.accepted().build();
     }
 
     @PatchMapping("/{id}/objectives/{oid}/keyResults/{kid}")
-    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> updateBusinessUnitObjectiveKeyResult(@RequestBody Map<String, Object> updates, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
+    public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> updateBusinessUnitObjectiveKeyResult(@RequestBody Map<String, Object> updates, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid, @RequestParam(value = "cokrId", required = false, defaultValue = "-1") Long cokrId) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
+        if(cokrId>0){
+            CompanyObjectiveKeyResult companyObjectiveKeyResult = companyObjectiveKeyResultRepository.findById(cokrId).orElseThrow(()-> new CompanyObjectiveKeyResultNotFoundException(cokrId));
+            updates.put("company_objective_key_result", companyObjectiveKeyResult);
+        }
         updates.put("user",user);
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
         BusinessUnitObjectiveKeyResult keyResult = keyResultRepository.findById(kid).orElseThrow(() -> new BusinessUnitObjectivesKeyResultNotFoundException(kid));
+        if(!keyResult.getUser().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+            throw new InvalidUserException(SecurityContextHolder.getContext().getAuthentication().getName());
 
         BusinessUnitObjectiveKeyResult updatedBusinessUnitObjectiveKeyResult = keyResultRepository.save(keyResult.applyPatch(updates));
         EntityModel<BusinessUnitObjectiveKeyResult> entity = keyResultAssembler.toModel(updatedBusinessUnitObjectiveKeyResult);
@@ -293,4 +316,5 @@ public class BusinessUnitController {
                 .created(entity.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entity);
     }
+
 }
