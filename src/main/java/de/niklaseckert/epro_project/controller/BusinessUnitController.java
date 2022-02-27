@@ -24,21 +24,53 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ *
+ * Controller which handels all {@link BusinessUnit business unit} requests.
+ *
+ * @author Niklas Eckert
+ * @author Jakob Friedsam
+ * @author Fabian Schulz
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("/bu")
 public class BusinessUnitController {
 
+    /** Repository which contains the {@link BusinessUnit Business Units}. */
     private final BusinessUnitRepository repository;
+
+    /** Repository which contains the {@link BusinessUnitObjective Business Unit Objectives}. */
     private final BusinessUnitObjectiveRepository objectiveRepository;
+
+    /** Repository which contains the {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Results}. */
     private final BusinessUnitObjectiveKeyResultRepository keyResultRepository;
+
+    /** Assembler which constructs the {@link BusinessUnit Business Unit}. */
     private final BusinessUnitAssembler assembler;
+
+    /** Assembler which constructs the {@link BusinessUnitObjective Business Unit Objectives}.*/
     private final BusinessUnitObjectiveAssembler objectiveAssembler;
+
+    /** Assembler which constructs the {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Results}.*/
     private final BusinessUnitKeyResultAssembler keyResultAssembler;
+
+    /** Assembler which constructs the {@link HistoryBusinessUnitObjectiveKeyResult History of Business Unit Objective Key Results}. */
     private final HistoryBusinessUnitObjectiveKeyResultAssembler historyBusinessUnitObjectiveKeyResultAssembler;
+
+    /** Repository which contains the {@link CompanyObjectiveKeyResult Company Objective Key Results}.*/
     private final CompanyObjectiveKeyResultRepository companyObjectiveKeyResultRepository;
+
+    /** Repository which contains the {@link User users}. */
     private final UserRepository userRepository;
 
+    /**
+     *
+     * Get Mapping for a specific {@link BusinessUnit Business Unit}.
+     *
+     * @param id contains the id of a {@link BusinessUnit Business Unit}.
+     * @return a Entity Model of a {@link BusinessUnit Business Unit}.
+     */
     @GetMapping("/{id}")
     public EntityModel<BusinessUnit> one(@PathVariable Long id) {
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
@@ -125,6 +157,13 @@ public class BusinessUnitController {
         return CollectionModel.of(historyBusinessUnitObjectiveKeyResults, linkTo(methodOn(BusinessUnitController.class).keyResultHistory(id, oid,kid)).withSelfRel());
     }
 
+    /**
+     *
+     * Post Mapping to create a new {@link BusinessUnit Business Unit}.
+     *
+     * @param businessUnit contains the {@link BusinessUnit Business Unit} which should be created.
+     * @return a Response Entity of the new {@link BusinessUnit Business Unit}.
+     */
     @PostMapping
     public ResponseEntity<EntityModel<BusinessUnit>> createBusinessUnit(@RequestBody BusinessUnit businessUnit) {
         BusinessUnit newBusinessUnit = repository.save(businessUnit);
@@ -133,6 +172,14 @@ public class BusinessUnitController {
                 .body(assembler.toModel(newBusinessUnit));
     }
 
+    /**
+     *
+     * Put Mapping for a specific {@link BusinessUnit Business Unit}.
+     *
+     * @param newBusinessUnit contains a new {@link BusinessUnit Business Unit}.
+     * @param id contains the ID of the {@link BusinessUnit Business Unit} which should be replaced.
+     * @return a Response Entity of a {@link BusinessUnit Business Unit}.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<EntityModel<BusinessUnit>> replaceBusinessUnit(@RequestBody BusinessUnit newBusinessUnit, @PathVariable Long id) {
         BusinessUnit updatedBusinessUnit = repository.findById(id)
@@ -149,6 +196,13 @@ public class BusinessUnitController {
                 .body(entity);
     }
 
+    /**
+     *
+     * Delete Mapping for a specific {@link BusinessUnit Business Unit}.
+     *
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @return an empty Response Entity.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBusinessUnit(@PathVariable Long id) {
         if (repository.findById(id).isEmpty()) {
@@ -158,6 +212,14 @@ public class BusinessUnitController {
         return ResponseEntity.accepted().build();
     }
 
+    /**
+     *
+     * Patch Mapping for a specific {@link BusinessUnit Business Unit}.
+     *
+     * @param updates contains a Map with the updates which should be applied.
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @return a Response Entity of a {@link BusinessUnit Business Unit}.
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<EntityModel<BusinessUnit>> updateBusinessUnit(@RequestBody Map<String, Object> updates, @PathVariable Long id) {
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));

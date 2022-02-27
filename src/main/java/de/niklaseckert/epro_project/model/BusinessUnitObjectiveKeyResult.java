@@ -76,7 +76,7 @@ public class BusinessUnitObjectiveKeyResult {
     }
 
     public int getAchievement() {
-        // TODO: check epsilon
+
         if (this.goal == 0) {
             return 0;
         }

@@ -8,6 +8,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ *
+ * Custom Basic Authentication Entry Point.
+ *
+ * @author Niklas Eckert
+ * @author Jakob Friedsam
+ * @author Fabian Schulz
+ */
 @Component
 public class OkrBasicAuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
     @Override
