@@ -25,8 +25,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
- *
- * Controller which handels all {@link BusinessUnit business unit} requests.
+ * Controller which handles all {@link BusinessUnit Business Unit} requests.
  *
  * @author Niklas Eckert
  * @author Jakob Friedsam
@@ -61,15 +60,14 @@ public class BusinessUnitController {
     /** Repository which contains the {@link CompanyObjectiveKeyResult Company Objective Key Results}.*/
     private final CompanyObjectiveKeyResultRepository companyObjectiveKeyResultRepository;
 
-    /** Repository which contains the {@link User users}. */
+    /** Repository which contains the {@link User Users}. */
     private final UserRepository userRepository;
 
     /**
-     *
      * Get Mapping for a specific {@link BusinessUnit Business Unit}.
      *
-     * @param id contains the id of a {@link BusinessUnit Business Unit}.
-     * @return a Entity Model of a {@link BusinessUnit Business Unit}.
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @return an Entity Model of a {@link BusinessUnit Business Unit}.
      */
     @GetMapping("/{id}")
     public EntityModel<BusinessUnit> one(@PathVariable Long id) {
@@ -78,6 +76,11 @@ public class BusinessUnitController {
         return assembler.toModel(businessUnit);
     }
 
+    /**
+     * Get Mapping for all {@link BusinessUnit Business Units}.
+     *
+     * @return a Collection Model of all {@link BusinessUnit Business Units}.
+     */
     @GetMapping
     public CollectionModel<EntityModel<BusinessUnit>> all() {
         List<EntityModel<BusinessUnit>> businessUnits = repository.findAll().stream()
@@ -89,6 +92,12 @@ public class BusinessUnitController {
                 );
     }
 
+    /**
+     * Get Mapping for all {@link BusinessUnitObjective Business Unit Objectives} of a specific {@link BusinessUnit Business Unit}.
+     *
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @return a Collection Model of all {@link BusinessUnitObjective Business Unit Objectives} of the specific {@link BusinessUnit Business Unit}.
+     */
     @GetMapping("/{id}/objectives")
     public CollectionModel<EntityModel<BusinessUnitObjective>> allObjectives(@PathVariable Long id) {
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
@@ -103,6 +112,13 @@ public class BusinessUnitController {
 
     }
 
+    /**
+     * Get Mapping for a specific {@link BusinessUnitObjective Business Unit Objective} of a specific {@link BusinessUnit Business Unit}.
+     *
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains the ID of a {@link BusinessUnitObjective Business Unit Objective}.
+     * @return an Entity Model of a {@link BusinessUnitObjective Business Unit Objective}.
+     */
     @GetMapping("/{id}/objectives/{oid}")
     public EntityModel<BusinessUnitObjective> oneObjective(@PathVariable Long id, @PathVariable Long oid) {
         BusinessUnit businessUnit = repository.findById(id).orElseThrow(() -> new BusinessUnitNotFoundException(id));
@@ -115,6 +131,14 @@ public class BusinessUnitController {
         return objectiveAssembler.toModel(objective);
     }
 
+    /**
+     * Get Mapping for a specific {@link BusinessUnitObjectiveKeyResult Key Result} of a specific {@link BusinessUnitObjective Business Unit Objective}.
+     *
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains the ID of a {@link BusinessUnitObjective Business Unit Objective}.
+     * @param kid contains the ID of a {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     * @return an Entity Model of the specific {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     */
     @GetMapping("/{id}/objectives/{oid}/keyResults/{kid}")
     public EntityModel<BusinessUnitObjectiveKeyResult> oneKeyResult(@PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitNotFoundException(oid));
@@ -127,6 +151,13 @@ public class BusinessUnitController {
         return keyResultAssembler.toModel(businessUnitObjectiveKeyResult);
     }
 
+    /**
+     * Get Mapping for all {@link BusinessUnitObjectiveKeyResult Key Results} of a specific {@link BusinessUnitObjective Business Unit Objective}.
+     *
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains the ID of a {@link BusinessUnitObjective Business Unit Objective}.
+     * @return a Collection Model of all {@link BusinessUnitObjectiveKeyResult Key Results} of a specific {@link BusinessUnitObjective Business Unit Objective}.
+     */
     @GetMapping("/{id}/objectives/{oid}/keyResults")
     public CollectionModel<EntityModel<BusinessUnitObjectiveKeyResult>> allKeyResults(@PathVariable Long id, @PathVariable Long oid) {
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitNotFoundException(oid));
@@ -141,6 +172,14 @@ public class BusinessUnitController {
 
     }
 
+    /**
+     * Get Mapping for the complete {@link HistoryBusinessUnitObjectiveKeyResult History} of a specific {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     *
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains the ID of a {@link BusinessUnitObjective Business Unit Objective}.
+     * @param kid contains the ID of a {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     * @return a Collection Model of the {@link HistoryBusinessUnitObjectiveKeyResult History} of a specific {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     */
     @GetMapping("/{id}/objectives/{oid}/keyResults/{kid}/history")
     public CollectionModel<EntityModel<HistoryBusinessUnitObjectiveKeyResult>> keyResultHistory(@PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
         BusinessUnitObjective businessUnitObjective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitNotFoundException(oid));
@@ -158,7 +197,6 @@ public class BusinessUnitController {
     }
 
     /**
-     *
      * Post Mapping to create a new {@link BusinessUnit Business Unit}.
      *
      * @param businessUnit contains the {@link BusinessUnit Business Unit} which should be created.
@@ -173,7 +211,6 @@ public class BusinessUnitController {
     }
 
     /**
-     *
      * Put Mapping for a specific {@link BusinessUnit Business Unit}.
      *
      * @param newBusinessUnit contains a new {@link BusinessUnit Business Unit}.
@@ -197,10 +234,9 @@ public class BusinessUnitController {
     }
 
     /**
-     *
      * Delete Mapping for a specific {@link BusinessUnit Business Unit}.
      *
-     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param id contains the ID of the {@link BusinessUnit Business Unit} which should be deleted.
      * @return an empty Response Entity.
      */
     @DeleteMapping("/{id}")
@@ -213,11 +249,10 @@ public class BusinessUnitController {
     }
 
     /**
-     *
      * Patch Mapping for a specific {@link BusinessUnit Business Unit}.
      *
      * @param updates contains a Map with the updates which should be applied.
-     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param id contains the ID of the {@link BusinessUnit Business Unit} which should be updated.
      * @return a Response Entity of a {@link BusinessUnit Business Unit}.
      */
     @PatchMapping("/{id}")
@@ -231,6 +266,13 @@ public class BusinessUnitController {
                 .body(entity);
     }
 
+    /**
+     * Post Mapping to create a new {@link BusinessUnitObjective Business Unit Objective}.
+     *
+     * @param newBusinessUnitObjective contains the {@link BusinessUnitObjective Business Unit Objective} which should be created.
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @return a Response Entity of the new {@link BusinessUnitObjective Business Unit Objective}.
+     */
     @PostMapping("/{id}/objectives")
     public ResponseEntity<EntityModel<BusinessUnitObjective>> createBusinessUnitObjective(@RequestBody BusinessUnitObjective newBusinessUnitObjective, @PathVariable Long id) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
@@ -244,6 +286,14 @@ public class BusinessUnitController {
                 .body(objectiveAssembler.toModel(objective));
     }
 
+    /**
+     * Put Mapping for a specific {@link BusinessUnitObjective Business Unit Objective}.
+     *
+     * @param newBusinessUnitObjective contains a new {@link BusinessUnitObjective Business Unit Objective}.
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains the ID of the {@link BusinessUnitObjective Business Unit Objective} which should be replaced.
+     * @return a Response Entity of a {@link BusinessUnitObjective Business Unit Objective}.
+     */
     @PutMapping("/{id}/objectives/{oid}")
     public ResponseEntity<EntityModel<BusinessUnitObjective>> replaceBusinessUnitObjective(@RequestBody BusinessUnitObjective newBusinessUnitObjective, @PathVariable Long id, @PathVariable Long oid) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
@@ -271,6 +321,13 @@ public class BusinessUnitController {
                 .body(entity);
     }
 
+    /**
+     * Delete Mapping for a specific {@link BusinessUnitObjective Business Unit Objective}.
+     *
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains the ID of the {@link BusinessUnitObjective Business Unit Objective} which should be deleted.
+     * @return an empty Response Entity.
+     */
     @DeleteMapping("/{id}/objectives/{oid}")
     public ResponseEntity<?> deleteBusinessUnitObjective(@PathVariable Long id, @PathVariable Long oid) {
         BusinessUnitObjective objective = objectiveRepository.findById(oid).orElseThrow(() -> new BusinessUnitObjectiveNotFoundException(oid));
@@ -280,6 +337,14 @@ public class BusinessUnitController {
         return ResponseEntity.accepted().build();
     }
 
+    /**
+     * Patch Mapping for a specific {@link BusinessUnitObjective Business Unit Objective}.
+     *
+     * @param updates contains a Map with the updates that should be applied.
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains the ID of the {@link BusinessUnitObjective Business Unit Objective} which should be updated.
+     * @return a Response Entity of a {@link BusinessUnitObjective Business Unit Objective}.
+     */
     @PatchMapping("/{id}/objectives/{oid}")
     public ResponseEntity<EntityModel<BusinessUnitObjective>> updatedBusinessUnitObjective(@RequestBody Map<String, Object> updates, @PathVariable Long id, @PathVariable Long oid) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
@@ -295,6 +360,15 @@ public class BusinessUnitController {
                 .body(entity);
     }
 
+    /**
+     * Post Mapping to create a new {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     *
+     * @param newBusinessUnitObjectiveKeyResult contains the {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result} which should be created.
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains the ID of a {@link BusinessUnitObjective Business Unit Objective}.
+     * @param cokrId contains the ID of a {@link CompanyObjectiveKeyResult Company Objective Key Result}.
+     * @return a Response Entity of the new {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     */
     @PostMapping("/{id}/objectives/{oid}/keyResults")
     public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> createBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @RequestParam(name="cokrId", required = false) Long cokrId) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
@@ -312,6 +386,16 @@ public class BusinessUnitController {
                 .body(keyResultAssembler.toModel(keyResult));
     }
 
+    /**
+     * Put Mapping for a specific {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     *
+     * @param newBusinessUnitObjectiveKeyResult contains a new {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains the ID of a {@link BusinessUnitObjective Business Unit Objective}.
+     * @param kid contains the ID of the {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result} which should be replaced.
+     * @param cokrId contains the ID of a {@link CompanyObjectiveKeyResult Company Objective Key Result}.
+     * @return a Response Entity of a {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     */
     @PutMapping("/{id}/objectives/{oid}/keyResults/{kid}")
     public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> replaceBusinessUnitObjectiveKeyResult(@RequestBody BusinessUnitObjectiveKeyResult newBusinessUnitObjectiveKeyResult, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid, @RequestParam(name="cokrId",required = false, defaultValue = "-1") Long cokrId) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
@@ -349,6 +433,14 @@ public class BusinessUnitController {
                 .body(entity);
     }
 
+    /**
+     * Delete Mapping for a specific {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     *
+     * @param id contains ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains ID of a {@link BusinessUnitObjective Business Unit Objective}.
+     * @param kid contains the id of the {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result} which should be deleted.
+     * @return
+     */
     @DeleteMapping("/{id}/objectives/{oid}/keyResults/{kid}")
     public ResponseEntity<?> deleteBusinessUnitObjectiveKeyResult(@PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid) {
         BusinessUnitObjectiveKeyResult businessUnitObjectiveKeyResult = keyResultRepository.findById(kid).orElseThrow(()-> new BusinessUnitObjectivesKeyResultNotFoundException(kid));
@@ -358,6 +450,16 @@ public class BusinessUnitController {
         return ResponseEntity.accepted().build();
     }
 
+    /**
+     * Patch Mapping for a specific {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     *
+     * @param updates contains a Map with the updated that should be applied.
+     * @param id contains the ID of a {@link BusinessUnit Business Unit}.
+     * @param oid contains the ID of a {@link BusinessUnitObjective Business Unit Objective}.
+     * @param kid contains the ID of the {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result} which should be updated.
+     * @param cokrId contains the ID of a {@link CompanyObjectiveKeyResult Company Objective Key Result}.
+     * @return a Response Entity of a {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Result}.
+     */
     @PatchMapping("/{id}/objectives/{oid}/keyResults/{kid}")
     public ResponseEntity<EntityModel<BusinessUnitObjectiveKeyResult>> updateBusinessUnitObjectiveKeyResult(@RequestBody Map<String, Object> updates, @PathVariable Long id, @PathVariable Long oid, @PathVariable Long kid, @RequestParam(value = "cokrId", required = false, defaultValue = "-1") Long cokrId) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new UsernameNotFoundException(""));
