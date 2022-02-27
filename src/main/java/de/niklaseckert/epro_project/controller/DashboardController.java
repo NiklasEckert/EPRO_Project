@@ -20,6 +20,6 @@ public class DashboardController {
     public String getDashboard(Model model) {
         model.addAttribute("company_objectives", companyObjectiveRepository.findAll());
         model.addAttribute("business_units", businessUnitRepository.findAll());
-        return "dashboard";
+        return "dashboard.html";
     }
 }

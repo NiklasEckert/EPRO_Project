@@ -34,7 +34,7 @@ public class DashboardTests {
                 .get("/dashboard")
                 .accept(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
-                .andExpect(view().name("dashboard"))
+                .andExpect(view().name("dashboard.html"))
                 .andExpect(model().attribute("company_objectives", companyObjectiveRepository.findAll()))
                 .andExpect(model().attribute("business_units", businessUnitRepository.findAll()));
     }
