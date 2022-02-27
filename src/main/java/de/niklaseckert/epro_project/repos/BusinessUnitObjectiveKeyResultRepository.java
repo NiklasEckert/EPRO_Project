@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- *
  * Repository which contains elements of {@link BusinessUnitObjectiveKeyResult Business Unit Objective Key Results}.
  * 
  * @author Niklas Eckert
