@@ -54,7 +54,7 @@ public class BusinessUnitObjective {
     }
 
     public int getAchievement() {
-        if (businessUnitObjectiveKeyResults.size() <= 0)
+        if (businessUnitObjectiveKeyResults==null|| businessUnitObjectiveKeyResults.size() <= 0)
             return 0;
 
         int sum = 0;
