@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- *
  * Exception which is thrown when a {@link de.niklaseckert.epro_project.model.BusinessUnit Business Unit} is not found.
  *
  * @author Niklas Eckert
