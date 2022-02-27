@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- *
  * Custom User Details Service.
  *
  * @author Niklas Eckert
@@ -23,7 +22,6 @@ public class OkrUserDetailsService implements UserDetailsService {
     private final UserRepository repository;
 
     /**
-     *
      * Returns a {@link User user} by its username.
      *
      * @param username contains name of the {@link User user}.

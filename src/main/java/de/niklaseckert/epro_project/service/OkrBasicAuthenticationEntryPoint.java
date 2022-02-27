@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- *
  * Custom Basic Authentication Entry Point.
  *
  * @author Niklas Eckert
@@ -18,6 +17,7 @@ import java.io.IOException;
  */
 @Component
 public class OkrBasicAuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
+
     @Override
     public void afterPropertiesSet() {
         setRealmName("okr");
