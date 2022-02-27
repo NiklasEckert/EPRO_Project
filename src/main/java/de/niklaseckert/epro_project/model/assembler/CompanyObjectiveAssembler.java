@@ -10,10 +10,22 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Class which constructs the Entity Model of a {@link CompanyObjective Company Objective} inclusive links.
+ *
+ * @author Niklas Eckert
+ * @author Jakob Friedsam
+ * @author Fabian Schulz
+ */
 @Component
 public class CompanyObjectiveAssembler implements RepresentationModelAssembler<CompanyObjective, EntityModel<CompanyObjective>> {
 
-
+    /**
+     * Puts together the Entity Model of a {@link CompanyObjective Company Objective}.
+     *
+     * @param entity {@link CompanyObjective Company Objective} from which the model should be build of.
+     * @return the Entity Model of the given {@link CompanyObjective Company Objective}.
+     */
     @Override
     @NonNull
     public EntityModel<CompanyObjective> toModel(@NonNull CompanyObjective entity) {

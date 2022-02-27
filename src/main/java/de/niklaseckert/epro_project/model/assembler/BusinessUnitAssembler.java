@@ -11,7 +11,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
- *
  * Class which constructs the Entity Model of a {@link BusinessUnit Business Unit} inclusive links.
  *
  * @author Niklas Eckert
@@ -22,10 +21,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class BusinessUnitAssembler implements RepresentationModelAssembler<BusinessUnit, EntityModel<BusinessUnit>> {
 
     /**
-     *
      * Puts together the Entity Model of a {@link BusinessUnit Business Unit}.
      *
-     * @param businessUnit from which the model should be build.
+     * @param businessUnit {@link BusinessUnit Business Unit} from which the model should be build of.
      * @return the Entity Model of the given {@link BusinessUnit Business Unit}.
      */
     @Override
@@ -38,6 +36,4 @@ public class BusinessUnitAssembler implements RepresentationModelAssembler<Busin
                     linkTo(methodOn(BusinessUnitController.class).allObjectives(businessUnit.getId())).withRel("objectives")
                 );
     }
-
-
 }

@@ -11,8 +11,22 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Class which constructs the Entity Model of a {@link CompanyObjectiveKeyResult Company Objective Key Result} inclusive links.
+ *
+ * @author Niklas Eckert
+ * @author Jakob Friedsam
+ * @author Fabian Schulz
+ */
 @Component
 public class CompanyObjectiveKeyResultAssembler implements RepresentationModelAssembler<CompanyObjectiveKeyResult, EntityModel<CompanyObjectiveKeyResult>> {
+
+    /**
+     * Puts together the Entity Model of a {@link CompanyObjectiveKeyResult Company Objective Key Result}.
+     *
+     * @param entity {@link CompanyObjectiveKeyResult Company Objective Key Result} from which the model should be build of.
+     * @return the Entity Model of the given {@link CompanyObjectiveKeyResult Company Objective Key Result}.
+     */
     @Override
     @NonNull
     public EntityModel<CompanyObjectiveKeyResult> toModel(@NonNull CompanyObjectiveKeyResult entity) {

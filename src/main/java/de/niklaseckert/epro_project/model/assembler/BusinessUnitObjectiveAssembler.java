@@ -10,9 +10,22 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Class which constructs the Entity Model of a {@link BusinessUnitObjective Business Unit Objective} inclusive links.
+ *
+ * @author Niklas Eckert
+ * @author Jakob Friedsam
+ * @author Fabian Schulz
+ */
 @Component
 public class BusinessUnitObjectiveAssembler implements RepresentationModelAssembler<BusinessUnitObjective, EntityModel<BusinessUnitObjective>> {
 
+    /**
+     * Puts together the Entity Model of a {@link BusinessUnitObjective Business Unit Objective}.
+     *
+     * @param entity {@link BusinessUnitObjective Business Unit Objective} from which the model should be build of.
+     * @return the Entity Model of the given {@link BusinessUnitObjective Business Unit Objective}.
+     */
     @Override
     @NonNull
     public EntityModel<BusinessUnitObjective> toModel(@NonNull BusinessUnitObjective entity) {
