@@ -33,8 +33,8 @@ public class CompanyObjectiveKeyResultAssembler implements RepresentationModelAs
         return EntityModel.of(entity,
                 linkTo(methodOn(CompanyObjectiveController.class).oneKeyResult(entity.getCompanyObjective().getId(),entity.getId() )).withSelfRel(),
                 linkTo(methodOn(CompanyObjectiveController.class).allKeyResults(entity.getCompanyObjective().getId())).withRel("key_results"),
-                linkTo(methodOn(CompanyObjectiveController.class).one(entity.getCompanyObjective().getId())).withRel("company_objective")
-
+                linkTo(methodOn(CompanyObjectiveController.class).one(entity.getCompanyObjective().getId())).withRel("company_objective"),
+                linkTo(methodOn(CompanyObjectiveController.class).keyResultHistory(entity.getCompanyObjective().getId(), entity.getId())).withRel("history")
         );
 
     }
