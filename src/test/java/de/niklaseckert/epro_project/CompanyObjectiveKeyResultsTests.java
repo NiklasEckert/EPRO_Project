@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.niklaseckert.epro_project.controller.exceptions.CompanyObjectiveKeyResultNotFoundException;
 import de.niklaseckert.epro_project.model.CompanyObjective;
 import de.niklaseckert.epro_project.model.CompanyObjectiveKeyResult;
+import de.niklaseckert.epro_project.model.HistoryCompanyObjectiveKeyResult;
 import de.niklaseckert.epro_project.model.User;
 import de.niklaseckert.epro_project.repos.CompanyObjectiveKeyResultRepository;
 import de.niklaseckert.epro_project.repos.CompanyObjectiveRepository;
@@ -47,6 +48,12 @@ public class CompanyObjectiveKeyResultsTests {
     private final CompanyObjectiveKeyResult COKR4 = CompanyObjectiveKeyResult.builder().id(4L).name("TestKR1").description("TestDescription4").current(0).goal(1).confidenceLevel(60).comment("test").companyObjective(CO2).user(user1).build();
     private final CompanyObjectiveKeyResult COKR5 = CompanyObjectiveKeyResult.builder().id(5L).name("TestKR2").description("TestDescription5").current(2).goal(4).confidenceLevel(75).comment("test").companyObjective(CO2).user(user1).build();
     private final CompanyObjectiveKeyResult COKR6 = CompanyObjectiveKeyResult.builder().id(6L).name("TestKR3").description("TestDescription6").current(11).goal(10).confidenceLevel(60).comment("test").companyObjective(CO2).user(user1).build();
+    private final HistoryCompanyObjectiveKeyResult HCOKR1 = HistoryCompanyObjectiveKeyResult.builder().id(1L).name("TestKR1").description("TestDescription1").current(5).goal(20).confidenceLevel(50).comment("test").companyObjective(CO1).user(user1).companyObjectiveKeyResult(COKR1).build();
+    private final HistoryCompanyObjectiveKeyResult HCOKR2 = HistoryCompanyObjectiveKeyResult.builder().id(1L).name("TestKR1").description("TestDescription2").current(5).goal(20).confidenceLevel(49).comment("test1").companyObjective(CO1).user(user1).companyObjectiveKeyResult(COKR1).build();
+    private final HistoryCompanyObjectiveKeyResult HCOKR3 = HistoryCompanyObjectiveKeyResult.builder().id(1L).name("TestKR1").description("TestDescription3").current(5).goal(20).confidenceLevel(48).comment("test2").companyObjective(CO1).user(user1).companyObjectiveKeyResult(COKR1).build();
+    private final HistoryCompanyObjectiveKeyResult HCOKR4 = HistoryCompanyObjectiveKeyResult.builder().id(1L).name("TestKR1").description("TestDescription4").current(5).goal(20).confidenceLevel(47).comment("test3").companyObjective(CO1).user(user1).companyObjectiveKeyResult(COKR1).build();
+    private final HistoryCompanyObjectiveKeyResult HCOKR5 = HistoryCompanyObjectiveKeyResult.builder().id(1L).name("TestKR1").description("TestDescription5").current(5).goal(20).confidenceLevel(46).comment("test4").companyObjective(CO1).user(user1).companyObjectiveKeyResult(COKR1).build();
+    private final HistoryCompanyObjectiveKeyResult HCOKR6 = HistoryCompanyObjectiveKeyResult.builder().id(1L).name("TestKR1").description("TestDescription6").current(5).goal(20).confidenceLevel(45).comment("test5").companyObjective(CO1).user(user1).companyObjectiveKeyResult(COKR1).build();
 
     @MockBean
     private CompanyObjectiveRepository companyObjectiveRepository;
@@ -263,5 +270,27 @@ public class CompanyObjectiveKeyResultsTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof CompanyObjectiveKeyResultNotFoundException));
+    }
+
+    @Test
+    @WithMockUser(username = "TestUser1", password = "TestPassword1", roles = "CO_OKR_ADMIN")
+    public void getCompanyObjectiveKeyResultHistory_success() throws Exception {
+        COKR1.setHistory(List.of(HCOKR1, HCOKR2, HCOKR3, HCOKR4, HCOKR5, HCOKR6));
+
+        Mockito.when(companyObjectiveRepository.findById(CO1.getId())).thenReturn(Optional.of(CO1));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/co/{id}/keyResults/{kid}/history", CO1.getId(), COKR1.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyCompanyObjectiveKeyResultList").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyCompanyObjectiveKeyResultList[*].id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyCompanyObjectiveKeyResultList[*].name").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyCompanyObjectiveKeyResultList[*].description").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyCompanyObjectiveKeyResultList[*].current").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyCompanyObjectiveKeyResultList[*].goal").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyCompanyObjectiveKeyResultList[*].confidenceLevel").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyCompanyObjectiveKeyResultList[*].comment").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyCompanyObjectiveKeyResultList[*].user.username").isNotEmpty());
     }
 }
