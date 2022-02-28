@@ -332,6 +332,44 @@ public class BusinessUnitObjectiveKeyResultsTests {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    @WithMockUser(username = "TestUser1", password = "TestPassword1", roles = "BUO_OKR_ADMIN")
+    public void getBusinessUnitKeyResultHistory_success() throws Exception {
+        User user1 = User.builder().id(1L).username("TestUser1").password("TestPassword1").build();
+        BusinessUnit BU1 = BusinessUnit.builder().id(1L).name("TestUnit1").build();
+        BusinessUnitObjective BUO1 = BusinessUnitObjective.builder().id(1L).name("TestObjective1").description("TestDescription1").businessUnit(BU1).user(user1).build();
+
+        CompanyObjective CO1 = CompanyObjective.builder().id(1L).name("O1/2023").description("TestCompanyObjective1").user(user1).build();
+        CompanyObjectiveKeyResult COKR1 = CompanyObjectiveKeyResult.builder().id(1L).name("TestKR1").description("TestDescription1").current(5).goal(20).confidenceLevel(50).comment("test").companyObjective(CO1).user(user1).build();
+        BusinessUnitObjectiveKeyResult BUOKR1= BusinessUnitObjectiveKeyResult.builder().id(1L).name("O1/2023").description("TestDescription1").current(15).goal(20).confidenceLevel(75).comment("TestComment1").businessUnitObjective(BUO1).user(user1).companyObjectiveKeyResult(COKR1).build();
+
+        HistoryBusinessUnitObjectiveKeyResult HBUOKR1 = HistoryBusinessUnitObjectiveKeyResult.builder().id(1L).name("O1/2023").description("TestDescription1").current(15).goal(20).confidenceLevel(75).comment("TestComment1").businessUnitObjective(BUO1).user(user1).companyObjectiveKeyResult(COKR1).businessUnitObjectiveKeyResult(BUOKR1).build();
+        HistoryBusinessUnitObjectiveKeyResult HBUOKR2 = HistoryBusinessUnitObjectiveKeyResult.builder().id(1L).name("O1/2023").description("TestDescription1").current(15).goal(20).confidenceLevel(75).comment("TestComment1").businessUnitObjective(BUO1).user(user1).companyObjectiveKeyResult(COKR1).businessUnitObjectiveKeyResult(BUOKR1).build();
+        HistoryBusinessUnitObjectiveKeyResult HBUOKR3 = HistoryBusinessUnitObjectiveKeyResult.builder().id(1L).name("O1/2023").description("TestDescription1").current(15).goal(20).confidenceLevel(75).comment("TestComment1").businessUnitObjective(BUO1).user(user1).companyObjectiveKeyResult(COKR1).businessUnitObjectiveKeyResult(BUOKR1).build();
+        HistoryBusinessUnitObjectiveKeyResult HBUOKR4 = HistoryBusinessUnitObjectiveKeyResult.builder().id(1L).name("O1/2023").description("TestDescription1").current(15).goal(20).confidenceLevel(75).comment("TestComment1").businessUnitObjective(BUO1).user(user1).companyObjectiveKeyResult(COKR1).businessUnitObjectiveKeyResult(BUOKR1).build();
+        HistoryBusinessUnitObjectiveKeyResult HBUOKR5 = HistoryBusinessUnitObjectiveKeyResult.builder().id(1L).name("O1/2023").description("TestDescription1").current(15).goal(20).confidenceLevel(75).comment("TestComment1").businessUnitObjective(BUO1).user(user1).companyObjectiveKeyResult(COKR1).businessUnitObjectiveKeyResult(BUOKR1).build();
+        HistoryBusinessUnitObjectiveKeyResult HBUOKR6 = HistoryBusinessUnitObjectiveKeyResult.builder().id(1L).name("O1/2023").description("TestDescription1").current(15).goal(20).confidenceLevel(75).comment("TestComment1").businessUnitObjective(BUO1).user(user1).companyObjectiveKeyResult(COKR1).businessUnitObjectiveKeyResult(BUOKR1).build();
+
+        BUO1.setBusinessUnitObjectiveKeyResults(List.of(BUOKR1));
+        BUOKR1.setHistory(List.of(HBUOKR1, HBUOKR2, HBUOKR3, HBUOKR4, HBUOKR5, HBUOKR6));
+
+        Mockito.when(businessUnitObjectiveRepository.findById(BUO1.getId())).thenReturn(Optional.of(BUO1));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/bu/{id}/objectives/{oid}/keyResults/{kid}/history", BU1.getId(), BUO1.getId(), BUOKR1.getId())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyBusinessUnitObjectiveKeyResultList").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyBusinessUnitObjectiveKeyResultList[*].id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyBusinessUnitObjectiveKeyResultList[*].name").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyBusinessUnitObjectiveKeyResultList[*].description").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyBusinessUnitObjectiveKeyResultList[*].current").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyBusinessUnitObjectiveKeyResultList[*].goal").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyBusinessUnitObjectiveKeyResultList[*].confidenceLevel").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyBusinessUnitObjectiveKeyResultList[*].comment").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.historyBusinessUnitObjectiveKeyResultList[*].user.username").isNotEmpty());
+    }
+
 
 
 }
