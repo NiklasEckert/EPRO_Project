@@ -62,7 +62,8 @@ CREATE TABLE IF NOT EXISTS okr.h_company_objective_key_result (
     confidence_level integer CHECK (confidence_level >= 0 AND confidence_level <= 100),
     comment text,
     company_objective_id integer NOT NULL REFERENCES okr.company_objective (id) ON DELETE CASCADE,
-    created_by integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE CASCADE
+    created_by integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE CASCADE,
+    timestamp timestamp NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS okr.business_unit_objective_key_result (
@@ -90,7 +91,8 @@ CREATE TABLE IF NOT EXISTS okr.h_business_unit_objective_key_result (
   comment text,
   business_unit_objective_id integer NOT NULL REFERENCES okr.business_unit_objective (id) ON DELETE CASCADE,
   co_key_result_id integer REFERENCES okr.company_objective_key_result (id) ON DELETE CASCADE,
-  created_by integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE CASCADE
+  created_by integer NOT NULL REFERENCES okr.okr_user (id) ON DELETE CASCADE,
+  timestamp timestamp NOT NULL
 );
 
 CREATE OR REPLACE FUNCTION check_co_key_result_amount() RETURNS trigger AS $check_co_key_result_amount$
@@ -195,7 +197,9 @@ CREATE OR REPLACE FUNCTION co_kr_update_to_history() RETURNS trigger AS $co_kr_u
             OLD.goal,
             OLD.confidence_level,
             OLD.comment,
-            OLD.company_objective_id
+            OLD.company_objective_id,
+            OLD.created_by,
+            CURRENT_TIMESTAMP(2)
         );
 
         RETURN NEW;
@@ -217,7 +221,9 @@ CREATE OR REPLACE FUNCTION bu_kr_update_to_history() RETURNS trigger AS $bu_kr_u
             OLD.confidence_level,
             OLD.comment,
             OLD.business_unit_objective_id,
-            OLD.co_key_result_id
+            OLD.co_key_result_id,
+            OLD.created_by,
+            CURRENT_TIMESTAMP(2)
         );
 
         RETURN NEW;

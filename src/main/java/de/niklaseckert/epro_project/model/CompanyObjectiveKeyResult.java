@@ -66,6 +66,7 @@ public class CompanyObjectiveKeyResult {
     /** Represents the {@link HistoryCompanyObjectiveKeyResult history} of a Company Objective Key Result. */
     @JsonIgnore
     @OneToMany(mappedBy = "companyObjectiveKeyResult")
+    @OrderBy("timestamp DESC")
     private List<HistoryCompanyObjectiveKeyResult> history;
 
     /** Represents the {@link User User} which created the Company Objective Key Result. */

@@ -67,6 +67,7 @@ public class BusinessUnitObjectiveKeyResult {
     /** Represents the {@link HistoryBusinessUnitObjectiveKeyResult history} of a Business Unit Objective Key Result. */
     @JsonIgnore
     @OneToMany(mappedBy = "businessUnitObjectiveKeyResult")
+    @OrderBy("timestamp DESC")
     private List<HistoryBusinessUnitObjectiveKeyResult> history;
 
     /** Represents the {@link User User} which created the Business Unit Objective. */
