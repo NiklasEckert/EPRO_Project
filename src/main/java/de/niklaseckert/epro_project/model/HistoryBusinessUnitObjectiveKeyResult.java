@@ -70,4 +70,9 @@ public class HistoryBusinessUnitObjectiveKeyResult {
     @ManyToOne
     @JoinColumn(name = "co_key_result_id", updatable = false)
     private CompanyObjectiveKeyResult companyObjectiveKeyResult;
+
+    /** Represents the {@link User User} which created the Business Unit Objective. */
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false)
+    private User user;
 }
