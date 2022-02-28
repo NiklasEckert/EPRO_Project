@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
  * Class which represents a History Business Unit Objective Key Result.
@@ -75,4 +76,8 @@ public class HistoryBusinessUnitObjectiveKeyResult {
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User user;
+
+    /** Represents the time then the {@link BusinessUnitObjectiveKeyResult Key Result} got pushed to history. */
+    @Column(name = "timestamp", nullable = false, updatable = false)
+    private Timestamp timestamp;
 }
