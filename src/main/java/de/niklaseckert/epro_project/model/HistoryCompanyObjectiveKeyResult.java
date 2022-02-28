@@ -70,4 +70,9 @@ public class HistoryCompanyObjectiveKeyResult {
     @JsonIgnore
     @OneToMany(mappedBy = "companyObjectiveKeyResult")
     private List<BusinessUnitObjectiveKeyResult> businessUnitObjectiveKeyResults;
+
+    /** Represents the {@link User User} which created the Company Objective Key Result. */
+    @ManyToOne
+    @JoinColumn(name = "created_by", nullable = false)
+    private User user;
 }
